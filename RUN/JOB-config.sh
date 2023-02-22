@@ -3,7 +3,7 @@ set -u
 UFS_EXEC=${UFS_EXEC:-ufs_model}
 JBNME=${TEST_NAME:-UFS}
 WLCLK=${WALLCLOCK:-$WLCLK_dflt}
-(( ${WLCLK} < 30 )) && WLCLK=$(echo "${WLCLK} * 60" | bc)
+(( $( echo "${WLCLK} < 30" | bc) )) && WLCLK=$(echo "${WLCLK} * 60" | bc)
 WLCLK=${WLCLK%.*}
 # Total Nodes
 TPN=$(( TPN / THRD ))
@@ -24,12 +24,6 @@ cp ${UFS_HOME}/bin/${UFS_EXEC} fv3.exe
 
 
 # Create job_card
-if [[ ${SCHEDULER} = 'pbs' ]]; then
-    atparse < $PATHRT/fv3_conf/fv3_qsub.IN > job_card
-elif [[ ${SCHEDULER} = 'slurm' ]]; then
-    atparse < ${PATHRT}/fv3_conf/fv3_slurm.IN > job_card
-elif [[ ${SCHEDULER} = 'lsf' ]]; then
-    atparse < ${PATHRT}/fv3_conf/fv3_bsub.IN > job_card
-fi
+atparse < $PATHRT/fv3_conf/${JOB_CARD} > job_card
 
 

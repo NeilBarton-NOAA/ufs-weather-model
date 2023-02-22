@@ -6,21 +6,29 @@ compiler=${compiler:-intel}
 debug=${debug:-F}
 
 if [[ ${machine} == hfe* ]]; then
-    export machine='hera'
-    export dprefix=/scratch1/NCEPDEV
-    export DISKNM=$dprefix/nems/emc.nemspara/RT
-    export SCHEDULER=slurm
-    export ACCNR=${ACCNR:-marine-cpu}
-    export QUEUE=batch
-    export SUBMIT=sbatch
-
+    machine='hera'
+    dprefix=/scratch1/NCEPDEV
+    DISKNM=$dprefix/nems/emc.nemspara/RT
+    SCHEDULER=slurm
+    ACCNR=${ACCNR:-marine-cpu}
+    QUEUE=batch
+    SUBMIT=sbatch
+    JOB_CARD=fv3_slurm.IN_hera
+elif [[ ${machine} == *login* ]]; then #WCOSS2
+    machine='wcoss2'
+    DISKNM=/lfs/h2/emc/nems/noscrub/emc.nems/RT
+    SCHEDULER=pbs
+    ACCNR=${ACCNR:-GFS-DEV}
+    QUEUE=dev
+    SUBMIT=qsub
+    JOB_CARD=fv3_qsub.IN_wcoss2
 fi
 
 export MACHINE_ID=${machine}.${compiler}
 
 if [[ ${debug} == T ]]; then
-    export module_file=${UFS_HOME}/modulefiles/ufs_hera.${compiler}_debug.lua
+    export module_file=${UFS_HOME}/modulefiles/ufs_${machine}.${compiler}_debug.lua
 else
-    export module_file=${UFS_HOME}/modulefiles/ufs_hera.${compiler}.lua
+    export module_file=${UFS_HOME}/modulefiles/ufs_${machine}.${compiler}.lua
 fi    
 
