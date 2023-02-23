@@ -7,9 +7,17 @@ CCPP_SUITE=${CPP_SUITE:-FV3_GFS_v17_coupled_p8}
 DIAG_TABLE=${DIAG_TABLE:-diag_table_p8_template}
 FV3_RUN=${FV3_RUN:-cpld_control_run.IN}
 
-# NMPI options
+WPG=${WPG:-48}
+IMP_PHYSICS=${ATM_PHYSICS:-${IMP_PHYSICS}}
+NPZ=${ATM_LEVELS:-127}
+RESTART_N=${RESTART_FREQ:-${FHMAX}}
+OUTPUT_N=${OUTPUT_FREQ:-${FHMAX}}
+WRITE_DPOST=${WRITE_DPOST:-.false.}
+
+# NMPI options and thread options
 INPES=${ATM_INPES:-$INPES}
 JNPES=${ATM_JNPES:-$JNPES}
+THRD_ATM=${THRD_ATM:-2}
 ATM_compute_tasks=$(( INPES * JNPES * NTILES ))
 
 #  input.nml edits
@@ -27,17 +35,11 @@ case "${ATM_RES}" in
             DNATS=2;;
 esac
 
-WPG=${WPG:-48}
-THRD_ATM=${THRD_ATM:-2}
-IMP_PHYSICS=${ATM_PHYSICS:-${IMP_PHYSICS}}
-NPZ=${ATM_LEVELS:-127}
-NPZP=$(( NPZ + 1 ))
+
 WRTTASK_PER_GROUP=$(( WPG * THRD_ATM ))
-RESTART_N=${RESTART_FREQ:-${FHMAX}}
+NPZP=$(( NPZ + 1 ))
 RESTART_INTERVAL="${RESTART_N} -1"
-OUTPUT_N=${OUTPUT_FREQ:-${FHMAX}}
 OUTPUT_FH="${OUTPUT_N} -1"
-WRITE_DPOST=${WRITE_DPOST:-.false.}
 
 atparse < ${PATHRT}/parm/${INPUT_NML} > input.nml
 atparse < ${PATHRT}/parm/${MODEL_CONFIGURE} > model_configure
