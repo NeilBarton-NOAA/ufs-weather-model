@@ -1,13 +1,14 @@
 #!/bin/bash
 set -u
 echo 'FV3-config.sh'
+# namelist defaults
 INPUT_NML=${INPUT_NML:-cpld_control.nml.IN}
 MODEL_CONFIGURE=${MODEL_CONFIGURE:-model_configure.IN}
 CCPP_SUITE=${CPP_SUITE:-FV3_GFS_v17_coupled_p8}
 DIAG_TABLE=${DIAG_TABLE:-diag_table_p8_template}
 FV3_RUN=${FV3_RUN:-cpld_control_run.IN}
-
-WPG=${WPG:-48}
+# FV3 defaults
+WPG=${ATM_WPG:-48}
 IMP_PHYSICS=${ATM_PHYSICS:-${IMP_PHYSICS}}
 NPZ=${ATM_LEVELS:-127}
 RESTART_N=${RESTART_FREQ:-${FHMAX}}
@@ -17,8 +18,7 @@ WRITE_DPOST=${WRITE_DPOST:-.false.}
 # NMPI options and thread options
 INPES=${ATM_INPES:-$INPES}
 JNPES=${ATM_JNPES:-$JNPES}
-THRD_ATM=${THRD_ATM:-2}
-ATM_compute_tasks=$(( INPES * JNPES * NTILES ))
+atm_omp_num_threads=${ATM_THRD:-2}
 
 #  input.nml edits
 [[ ${CHM_NMPI} == 0 ]] && CPLCHM=.false.
@@ -36,7 +36,7 @@ case "${ATM_RES}" in
 esac
 
 
-WRTTASK_PER_GROUP=$(( WPG * THRD_ATM ))
+WRTTASK_PER_GROUP=$(( WPG * atm_omp_num_threads ))
 NPZP=$(( NPZ + 1 ))
 RESTART_INTERVAL="${RESTART_N} -1"
 OUTPUT_FH="${OUTPUT_N} -1"

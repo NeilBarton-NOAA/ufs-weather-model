@@ -61,7 +61,7 @@ source ${UFS_HOME}/RUN/FV3-config.sh
 [[ ${CHM_NMPI} != 0 ]] && source ${UFS_HOME}/RUN/GOCART-config.sh
 source ${UFS_HOME}/RUN/MOM6-config.sh
 source ${UFS_HOME}/RUN/CICE-config.sh
-[[ ${WAV_NMPI} != 0 ]] && source ${UFS_HOME}/RUN/WW3-config.sh
+[[ ${WAV_NMPI} != 0 ]] && source ${UFS_HOME}/RUN/WW3-config.sh || WAV_tasks=${WAV_NMPI}
 source ${UFS_HOME}/RUN/CMEPS-config.sh
 
 ########################

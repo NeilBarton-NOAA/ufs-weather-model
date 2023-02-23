@@ -5,6 +5,7 @@ JBNME=${TEST_NAME:-UFS}
 WLCLK=${WALLCLOCK:-$WLCLK_dflt}
 (( $( echo "${WLCLK} < 30" | bc) )) && WLCLK=$(echo "${WLCLK} * 60" | bc)
 WLCLK=${WLCLK%.*}
+
 # Total Nodes
 TPN=$(( TPN / THRD ))
 if (( TASKS < TPN )); then

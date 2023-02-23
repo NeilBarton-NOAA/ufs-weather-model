@@ -67,7 +67,8 @@ function compute_petbounds_and_tasks() {
   chm_petlist_bounds="0 $((ATM_compute_tasks * atm_omp_num_threads - 1))"
 
   # MED
-  med_petlist_bounds="0 $((ATM_compute_tasks * atm_omp_num_threads - 1))"
+  MED_compute_tasks=${MED_tasks:-$ATM_compute_tasks}
+  med_petlist_bounds="0 $((MED_compute_tasks * atm_omp_num_threads - 1))"
 
   # AQM
   aqm_petlist_bounds="0 $((ATM_compute_tasks * atm_omp_num_threads - 1))"
