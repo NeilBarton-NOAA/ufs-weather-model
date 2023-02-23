@@ -3,7 +3,8 @@ set -u
 echo 'CMEPS-config.sh'
 NEMS_CONFIGURE=${NEMS_CONFIGURE:-nems.configure.cpld_esmfthreads.IN}
 PET_LOGS=${PETLOGS:-F}
-MED_tasks=${MED_NMPI:-${ATM_compute_tasks}}
+MED_tasks=${MED_NMPI:-$(( INPES * JNPES * atm_omp_num_threads ))}
+
 med_omp_num_threads=${atm_omp_num_threads}
 
 if [[ ${CHM_NMPI} == 0 && ${WAV_NMPI} == 0 ]]; then
