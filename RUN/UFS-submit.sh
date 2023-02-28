@@ -26,19 +26,20 @@ done
 
 ########################
 # defaults
+PATH_RUN=${PATH_RUN:-${UFS_HOME}/RUN}
 PATHRT=${UFS_HOME}/tests
 # tools
 source ${PATHRT}/rt_utils.sh
 source ${PATHRT}/atparse.bash
 # machine specific
-source ${UFS_HOME}/RUN/MACHINE-config.sh
+source ${PATH_RUN}/MACHINE-config.sh
 # directories 
 INPUTDATA_ROOT=${INPUTDATA_ROOT:-${DISKNM}/NEMSfv3gfs/input-data-20221101}
 INPUTDATA_ROOT_BMIC=${INPUTDATA_ROOT_BMIC:-$DISKNM/NEMSfv3gfs/BM_IC-20220207}
 INPUTDATA_ROOT_WW3=${INPUTDATA_ROOT}/WW3_input_data_20220624
 # variables
-source ${UFS_HOME}/tests/default_vars.sh
-source ${UFS_HOME}/tests/tests/${RT_TEST}
+source ${PATHRT}/default_vars.sh
+source ${PATHRT}/tests/${RT_TEST}
 
 ########################
 # change of default based on values
@@ -57,16 +58,16 @@ FHMAX=${FHMAX%.*}
 
 ####################################
 # Write Namelist Files 
-source ${UFS_HOME}/RUN/FV3-config.sh
-[[ ${CHM_NMPI} != 0 ]] && source ${UFS_HOME}/RUN/GOCART-config.sh
-source ${UFS_HOME}/RUN/MOM6-config.sh
-source ${UFS_HOME}/RUN/CICE-config.sh
-[[ ${WAV_NMPI} != 0 ]] && source ${UFS_HOME}/RUN/WW3-config.sh || WAV_tasks=${WAV_NMPI}
-source ${UFS_HOME}/RUN/CMEPS-config.sh
+source ${PATH_RUN}/FV3-config.sh
+[[ ${CHM_NMPI} != 0 ]] && source ${PATH_RUN}/GOCART-config.sh
+source ${PATH_RUN}/MOM6-config.sh
+source ${PATH_RUN}/CICE-config.sh
+[[ ${WAV_NMPI} != 0 ]] && source ${PATH_RUN}/WW3-config.sh || WAV_tasks=${WAV_NMPI}
+source ${PATH_RUN}/CMEPS-config.sh
 
 ########################
 # create job card
-source ${UFS_HOME}/RUN/JOB-config.sh
+source ${PATH_RUN}/JOB-config.sh
 # execute model
 echo 'RUNDIR: ' ${PWD}
 [[ ${DEBUG} == F ]] && ${SUBMIT} job_card

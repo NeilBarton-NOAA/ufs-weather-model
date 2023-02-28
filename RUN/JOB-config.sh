@@ -3,6 +3,7 @@ set -u
 UFS_EXEC=${UFS_EXEC:-ufs_model}
 JBNME=${TEST_NAME:-UFS}
 WLCLK=${WALLCLOCK:-$WLCLK_dflt}
+EXTRA_NODE=${EXTRA_NODE:-F}
 (( $( echo "${WLCLK} < 30" | bc) )) && WLCLK=$(echo "${WLCLK} * 60" | bc)
 WLCLK=${WLCLK%.*}
 
@@ -16,6 +17,9 @@ if (( NODES * TPN < TASKS )); then
   NODES=$(( NODES + 1 ))
 fi
 TASKS=$(( NODES * TPN ))
+if [[ ${EXTRA_NODE} == T ]]; then
+  NODES=$(( NODES + 1 ))
+fi
 
 # copy needed items
 cp ${PATHRT}/module-setup.sh .

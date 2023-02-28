@@ -19,18 +19,11 @@ if (( $(( NY_GLB % NPY )) == 0 )); then
 else
     BLCKY=$(( (NY_GLB / NPY) + 1 ))
 fi
-max_blocks=$(( (NX_GLB * NY_GLB) / (BLCKX * BLCKY * ICE_tasks) ))
-if (( max_blocks == 0 )) || (( max_blocks % 2 != 0 )); then
-    max_blocks=-1
-fi
 
 atparse < ${PATHRT}/parm/ice_in_template > ice_in
 if [[ ${ICE_OUTPUT} == F ]]; then
     sed -i "s:histfreq       = 'm','d','h','x','x':histfreq       = 'x','x','x','x','x':g"  ice_in
     sed -i "s:histfreq_n     =  0 , 0 , 6 , 1 , 1:histfreq_n     =  0 , 0 , 0 , 0 , 0:g" ice_in
-fi
-if (( ${max_blocks} != -1 )); then
-    sed -i "s:max_blocks        = -1:max_blocks        = ${max_blocks}:g" ice_in
 fi
 
 
