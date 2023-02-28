@@ -41,6 +41,16 @@ NPZP=$(( NPZ + 1 ))
 RESTART_INTERVAL="${RESTART_N} -1"
 OUTPUT_FH="${OUTPUT_N} -1"
 
+# values similar to global workflow
+OUTPUT_FILE="'netcdf_parallel'"
+ICHUNK2D=$(( 4 * ${ATM_RES:1} ))
+JCHUNK2D=$(( 2 * ${ATM_RES:1} ))
+ICHUNK3D=$(( 4 * ${ATM_RES:1} ))
+JCHUNK3D=$(( 2 * ${ATM_RES:1} ))
+KCHUNK3D=1
+IDEFLATE=1
+NBITS=14
+
 atparse < ${PATHRT}/parm/${INPUT_NML} > input.nml
 atparse < ${PATHRT}/parm/${MODEL_CONFIGURE} > model_configure
 atparse < ${PATHRT}/parm/diag_table/${DIAG_TABLE} > diag_table
