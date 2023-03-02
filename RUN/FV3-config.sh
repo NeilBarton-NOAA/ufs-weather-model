@@ -18,7 +18,7 @@ WRITE_DPOST=${WRITE_DPOST:-.false.}
 # NMPI options and thread options
 INPES=${ATM_INPES:-$INPES}
 JNPES=${ATM_JNPES:-$JNPES}
-atm_omp_num_threads=${ATM_THRD:-2}
+atm_omp_num_threads=${ATM_THRD:-${atm_omp_num_threads}}
 
 #  input.nml edits
 [[ ${CHM_NMPI} == 0 ]] && CPLCHM=.false.
@@ -42,7 +42,7 @@ RESTART_INTERVAL="${RESTART_N} -1"
 OUTPUT_FH="${OUTPUT_N} -1"
 
 # values similar to global workflow
-OUTPUT_FILE="'netcdf_parallel'"
+OUTPUT_FILE="'netcdf_parallel' 'netcdf_parallel'"
 ICHUNK2D=$(( 4 * ${ATM_RES:1} ))
 JCHUNK2D=$(( 2 * ${ATM_RES:1} ))
 ICHUNK3D=$(( 4 * ${ATM_RES:1} ))

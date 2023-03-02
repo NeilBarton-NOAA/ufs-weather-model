@@ -1,6 +1,7 @@
 #!/bin/bash
 set -u
-#set -x
+DEBUG=${DEBUG:-F}
+[[ ${DEBUG} == T ]] && set -x
 ################################################
 # submit UFS weather model largely folling RTs, but with more flexability 
 #   default is to run the S2SWA using the RT defaults
