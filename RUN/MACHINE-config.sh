@@ -9,6 +9,7 @@ if [[ ${machine} == hfe* ]]; then
     machine='hera'
     dprefix=/scratch1/NCEPDEV
     DISKNM=$dprefix/nems/emc.nemspara/RT
+    FIX_DIR=/scratch1/NCEPDEV/global/glopara/fix
     SCHEDULER=slurm
     ACCNR=${ACCNR:-marine-cpu}
     QUEUE=batch
@@ -17,6 +18,7 @@ if [[ ${machine} == hfe* ]]; then
 elif [[ ${machine} == *login* ]]; then #WCOSS2
     machine='wcoss2'
     DISKNM=/lfs/h2/emc/nems/noscrub/emc.nems/RT
+    FIX_DIR=/lfs/h2/emc/global/noscrub/emc.global/FIX/fix
     SCHEDULER=pbs
     ACCNR=${ACCNR:-GFS-DEV}
     QUEUE=dev

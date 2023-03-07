@@ -1,10 +1,15 @@
 #!/bin/sh
 echo 'CICE-config.sh'
-ICE_tasks=${ICE_NMPI:-$ICE_tasks}
-NPROC_ICE=${ICE_tasks}
-ICE_OUTPUT=${ICE_OUTPUT:-F}
 
+####################################
+# IO options
+ICE_OUTPUT=${ICE_OUTPUT:-F}
+RESTART_FREQ=${RESTART_FREQ:-$FHMAX}
+DUMPFREQ_N=$(( RESTART_FREQ / 24 ))
+
+####################################
 # determine block size from ICE_tasks and grid
+NPROC_ICE=${ICE_tasks}
 cice_processor_shape=${CICE_DECOMP:-'slenderX2'}
 shape=${cice_processor_shape#${cice_processor_shape%?}}
 NPX=$(( ICE_tasks / shape )) #number of processors in x direction
@@ -20,10 +25,28 @@ else
     BLCKY=$(( (NY_GLB / NPY) + 1 ))
 fi
 
+####################################
+# look for restarts if provided
+if [[ ${IC_DIR} != 'none' ]]; then
+    f=$(ls ${IC_DIR}/ice/*)
+    rm -f cice_model.res.nc
+    ln -sf ${f} cice_model.res.nc
+    #ln -sf cice_model.res.nc ice.restart_in
+    #cp -f ${f} cice.restart_in
+    #CICERUNTYPE='continue'
+    #USE_RESTART_TIME=.true.
+    CICERUNTYPE='initial'
+    USE_RESTART_TIME=.false.
+cat <<EOF > ice.restart_file
+cice_model.res.nc
+EOF
+fi
+
+####################################
+# parse namelist file
 atparse < ${PATHRT}/parm/ice_in_template > ice_in
 if [[ ${ICE_OUTPUT} == F ]]; then
     sed -i "s:histfreq       = 'm','d','h','x','x':histfreq       = 'x','x','x','x','x':g"  ice_in
     sed -i "s:histfreq_n     =  0 , 0 , 6 , 1 , 1:histfreq_n     =  0 , 0 , 0 , 0 , 0:g" ice_in
 fi
-
 

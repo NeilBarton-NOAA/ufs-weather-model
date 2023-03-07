@@ -1,17 +1,36 @@
 #!/bin/bash
 echo 'WW3-config.sh'
-DT_2_RST=86400
+####################################
+# thread options
 wav_omp_num_threads=${WAV_THRD:-${wav_omp_num_threads}}
 
-WAV_GRID=${WAV_GRID:-'default'}
-if [[ ${WAV_GRID} != 'default' ]]; then
-    cp ${WAV_GRID} .
-    MESH_WAV=$(basename ${WAV_GRID})
-    grid=${MESH_WAV##mesh_}
-    grid=${grid%%.nc}
-    cp $(dirname ${WAV_GRID})/mod_def_${grid}.ww3 mod_def.ww3
+####################################
+# IO options
+RESTART_FREQ=${RESTART_FREQ:-$FHMAX}
+DT_2_RST=$(( RESTART_FREQ * 3600 )) 
+
+####################################
+# change grid if needed
+WAV_MOD_DEF=${WAV_MOD_DEF:-'default'}
+if [[ ${WAV_MOD_DEF} != 'default' ]]; then
+    cp ${WAV_MOD_DEF} mod_def.ww3
+    WAV_MESH=${WAV_MESH:-'default'}
+    if [[ ${WAV_MESH} != 'default' ]]; then
+        ln -sf ${WAV_MESH} .
+        MESH_WAV=$(basename ${WAV_MESH})
+    else
+        MESH_WAV=mesh.mx025.nc
+    fi
 fi
 
+####################################
+# look for restarts if provided
+if [[ ${IC_DIR} != 'none' ]]; then
+    ln -sf ${IC_DIR}/wav/${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart.ww3.${WAV_RES} restart.ww3
+fi
+
+####################################
+#parse namelist file
 if [[ $MULTIGRID = 'true' ]]; then
  atparse < ${PATHRT}/parm/ww3_multi.inp.IN > ww3_multi.inp
 else

@@ -13,8 +13,6 @@ DEBUG=${DEBUG:-F}
 RUNDIR=${1} && mkdir -p ${RUNDIR} && cd ${RUNDIR}
 UFS_HOME=${UFS_HOME:-${0%/*}}
 RT_TEST=${RT_TEST:-cpld_bmark_p8}
-CHM_NMPI=${CHM_NMPI:-default}
-WAV_NMPI=${WAV_NMPI:-default}
 
 echo "RUNDIR: ${RUNDIR}"
 ########################
@@ -43,27 +41,45 @@ source ${PATHRT}/default_vars.sh
 source ${PATHRT}/tests/${RT_TEST}
 
 ########################
-# change of default based on values
+# change of default based on values needed for most scripts
+OCN_tasks=${OCN_NMPI:-$OCN_tasks}
+ICE_tasks=${ICE_NMPI:-$ICE_tasks}
+WAV_tasks=${WAV_NMPI:-$WAV_tasks}
+CHM_tasks=${CHM_NMPI:-$CHM_tasks}
 FL=${FORECAST_LENGTH:-1}
 FHMAX=$( echo "${FL} * 24" | bc )
 FHMAX=${FHMAX%.*}
+IC_DIR=${IC_DIR:-'none'}
+
+########################
+# FV3_RUN TODO, change this
+FV3_RUN=${FV3_RUN:-cpld_control_run.IN}
+[[ -f fv3_run ]] && rm fv3_run
+for i in ${FV3_RUN}; do
+    atparse < ${PATHRT}/fv3_conf/${i} >> fv3_run
+done
+if [[ ${DEBUG} == F ]]; then
+    RT_SUFFIX=""
+    echo 'RUNNING fv3_run'
+    source ./fv3_run
+fi
 
 ########################
 # set year and default year for coupled bmark run
-#DTG=${DTG:-${SYEAR}${SMONTH}${SDAY}${SHOUR}00}
-#export SYEAR=${DTG:0:4}
-#export SMONTH=${DTG:6:2}
-#export SDAY=${DTG:8:2}
-#export SHOUR=${DTG:10:2}
-#export SECS=$( $SHOUR * 3600 )
+DTG=${DTG:-${SYEAR}${SMONTH}${SDAY}${SHOUR}00}
+export SYEAR=${DTG:0:4}
+export SMONTH=${DTG:4:2}
+export SDAY=${DTG:6:2}
+export SHOUR=${DTG:8:2}
+export SECS=$(( $SHOUR * 3600 ))
 
 ####################################
 # Write Namelist Files 
 source ${PATH_RUN}/FV3-config.sh
-[[ ${CHM_NMPI} != 0 ]] && source ${PATH_RUN}/GOCART-config.sh
+[[ ${CHM_tasks} != 0 ]] && source ${PATH_RUN}/GOCART-config.sh
 source ${PATH_RUN}/MOM6-config.sh
 source ${PATH_RUN}/CICE-config.sh
-[[ ${WAV_NMPI} != 0 ]] && source ${PATH_RUN}/WW3-config.sh || WAV_tasks=${WAV_NMPI}
+[[ ${WAV_tasks} != 0 ]] && source ${PATH_RUN}/WW3-config.sh 
 source ${PATH_RUN}/CMEPS-config.sh
 
 ########################
