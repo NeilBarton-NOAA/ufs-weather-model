@@ -27,6 +27,9 @@ cp ${module_file} modules.fv3.lua
 cp ${UFS_HOME}/modulefiles/ufs_common* .
 cp ${UFS_HOME}/bin/${UFS_EXEC} fv3.exe
 
+# rm files if needed
+[[ -f err ]] && rm err
+[[ -f out ]] && rm out
 
 # Create job_card
 atparse < $PATHRT/fv3_conf/${JOB_CARD} > job_card

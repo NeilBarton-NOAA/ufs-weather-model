@@ -8,7 +8,7 @@ DEBUG=${DEBUG:-F}
 #   TODOS:
 #       - link needed data instead of running ./fv3_run
 #       - add option to start with other ICs and start dates
-#       - run with different processer and thread counts (ATM, OCN, ICE -> completed)
+#       - not sure if field table in FV3-config.sh is needed
 ########################
 RUNDIR=${1} && mkdir -p ${RUNDIR} && cd ${RUNDIR}
 UFS_HOME=${UFS_HOME:-${0%/*}}

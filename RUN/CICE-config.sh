@@ -28,9 +28,13 @@ fi
 ####################################
 # look for restarts if provided
 if [[ ${IC_DIR} != 'none' ]]; then
-    f=$(ls ${IC_DIR}/ice/*)
+    ice_ic=$(ls ${IC_DIR}/ice/*)
+    if [[ ! -f ${ice_ic} ]]; then
+        echo "${ice_ic} file not found"
+        exit 1
+    fi
     rm -f cice_model.res.nc
-    ln -sf ${f} cice_model.res.nc
+    ln -sf ${ice_ic} cice_model.res.nc
     #ln -sf cice_model.res.nc ice.restart_in
     #cp -f ${f} cice.restart_in
     #CICERUNTYPE='continue'

@@ -15,12 +15,17 @@ WAV_GRID=${WAV_GRID:-'default'}
 [[ ${WAV_GRID} != 'default' ]] && MESH_WAV=$(basename ${WAV_GRID})
 
 ########################
-#if [[ ${IC_DIR} != 'none' ]]; then
-#    f=$(ls ${IC_DIR}/med/*)
-#    ln -sf ${f} ufs.cpld.cpl.r.nc
-#    rm -f rpointer.cpl && touch rpointer.cpl
-#    echo "ufs.cpld.cpl.r.nc" >> "rpointer.cpl"
-#fi
+if [[ ${IC_DIR} != 'none' ]]; then
+    med_ic=$(ls ${IC_DIR}/med/*)
+    if [[ ! -f ${med_ic} ]]; then
+        echo "${med_ic} file not found"
+        exit 1
+    fi
+    ln -sf ${med_ic} ufs.cpld.cpl.r.nc
+    rm -f rpointer.cpl && touch rpointer.cpl
+    echo "ufs.cpld.cpl.r.nc" >> "rpointer.cpl"
+    RUNTYPE=continue
+fi
 
 ########################
 # write namelists files

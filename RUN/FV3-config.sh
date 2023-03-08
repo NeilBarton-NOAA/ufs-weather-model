@@ -56,16 +56,38 @@ NBITS=14
 
 ####################################
 # look for restarts if provided
-#if [[ ${IC_DIR} != 'none' ]]; then
-#    mkdir -p RESTART
-#    ln -sf ${IC_DIR}/atm/* RESTART/
-#    WARM_START=.true.
-#    MAKE_NH=.false.
-#    NA_INIT=0
-#    EXTERNAL_IC=.false.
-#    NGGPS_IC=.false.
-#    MOUNTAIN=.true.
-#fi
+if [[ ${IC_DIR} != 'none' ]]; then
+    n_files=$( ls ${IC_DIR}/atm/*nc 2>/dev/null | wc -l )
+    if (( ${n_files} == 0 )); then
+        echo 'no atm ICs found'
+        exit 1
+    fi
+    mkdir -p INPUT
+    atm_ics=$( ls ${IC_DIR}/atm/*nc )
+    for atm_ic in ${atm_ics}; do
+        f=$( basename ${atm_ic} )
+        if [[ ${f:11:4} == '0000' ]]; then
+            f=${f:16}
+        fi
+        ln -sf ${atm_ic} INPUT/${f}
+    done
+    # make coupler.res file
+    cat >> INPUT/coupler.res << EOF
+ 3        (Calendar: no_calendar=0, thirty_day_months=1, julian=2, gregorian=3, noleap=4)
+ ${SYEAR}  ${SMONTH}  ${SDAY}  ${SHOUR}     0     0        Model start time:   year, month, day, hour, minute, second
+ ${SYEAR}  ${SMONTH}  ${SDAY}  ${SHOUR}     0     0        Current model time: year, month, day, hour, minute, second
+EOF
+    # change namelist options
+    WARM_START=.true.
+    MAKE_NH=.false.
+    NA_INIT=0
+    EXTERNAL_IC=.false.
+    NGGPS_IC=.false.
+    MOUNTAIN=.true.
+    # remote possible cold start files
+    rm -f INPUT/gfs_data.tile*nc
+    rm -f INPUT/gfs_cntrl.nc
+fi
 
 ####################################
 # parse namelist files
