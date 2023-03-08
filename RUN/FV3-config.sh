@@ -30,8 +30,7 @@ case "${ATM_RES}" in
             IMO=1536 
             JMO=768
             NPX=385
-            NPY=385
-            DNATS=2;;
+            NPY=385;;
 esac
 
 ####################################
@@ -53,6 +52,9 @@ JCHUNK3D=$(( 2 * ${ATM_RES:1} ))
 KCHUNK3D=1
 IDEFLATE=1
 NBITS=14
+DNATS=0
+DOGP_CLDOPTICS_LUT=.false.
+DOGP_LWSCAT=.false.
 
 ####################################
 # look for restarts if provided
