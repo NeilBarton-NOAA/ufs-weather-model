@@ -20,6 +20,7 @@ elif [[ ${machine} == *login* ]]; then #WCOSS2
     machine='wcoss2'
     DISKNM=/lfs/h2/emc/nems/noscrub/emc.nems/RT
     FIX_DIR=/lfs/h2/emc/global/noscrub/emc.global/FIX/fix
+    NPB_FIX=/lfs/h2/emc/ptmp/neil.barton/CODE/FIX/
     SCHEDULER=pbs
     ACCNR=${ACCNR:-GFS-DEV}
     QUEUE=dev

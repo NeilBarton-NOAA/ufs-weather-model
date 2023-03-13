@@ -18,7 +18,7 @@ WAV_GRID=${WAV_GRID:-'default'}
 if [[ ${FIX_METHOD} == 'LINK' ]]; then
 
 if [[ ${WARM_START} == '.true.' ]]; then
-    med_ic=$(ls ${MED_ICDIR}/*)
+    med_ic=$(ls ${MED_ICDIR}/*ufs.cpld.cpl.r*)
     if [[ ! -f ${med_ic} ]]; then
         echo "  FATAL: ${med_ic} file not found"
         exit 1

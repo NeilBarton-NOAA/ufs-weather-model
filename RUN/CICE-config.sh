@@ -29,7 +29,7 @@ fi
 ####################################
 # look for restarts if provided
 ICE_ICDIR=${ICE_ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/cpc}
-ice_ic=$(ls ${ICE_ICDIR}/*)
+ice_ic=$(ls ${ICE_ICDIR}/*ice*.nc)
 if [[ ! -f ${ice_ic} ]]; then
     echo "  FATAL: ${ice_ic} file not found"
     exit 1

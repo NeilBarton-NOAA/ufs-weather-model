@@ -10,7 +10,7 @@ mkdir -p INPUT MOM6_OUTPUT
 ####################################
 # look for restarts if provided
 OCN_ICDIR=${OCN_ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/mom6_da}
-n_files=$( ls ${OCN_ICDIR}/*nc 2>/dev/null | wc -l )
+n_files=$( ls ${OCN_ICDIR}/MOM.res*nc 2>/dev/null | wc -l )
 if (( ${n_files} == 0 )); then
     echo '   FATAL: no ocn ICs found in:' ${OCN_ICDIR}
     exit 1
@@ -18,7 +18,7 @@ fi
 if [[ ${FIX_METHOD} == 'RT' ]]; then
     ln -sf ${IC_DIR}/ocn/* .
 else
-   ocn_ics=$( ls ${OCN_ICDIR}/*nc )
+   ocn_ics=$( ls ${OCN_ICDIR}/MOM.res*nc )
    for ocn_ic in ${ocn_ics}; do
     LF+=(["${ocn_ic}"]="INPUT/")
    done

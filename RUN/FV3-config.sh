@@ -107,7 +107,7 @@ if (( ${n_files} == (( NTILES * 2 )) )); then
     LF+=(["${ATM_ICDIR}/gfs_ctrl.nc"]="INPUT/")
 else #ATM WARMSTART
     echo "  FV3 Warm Start"
-    atm_ics=$( ls ${ATM_ICDIR}/*nc )
+    atm_ics=$( ls ${ATM_ICDIR}/*ca_data*nc ${ATM_ICDIR}/*fv_core.res* ${ATM_ICDIR}/*fv_srf_wnd.res* ${ATM_ICDIR}/*fv_srf_wnd.res* ${ATM_ICDIR}/*fv_tracer* ${ATM_ICDIR}/*phy_data* ${ATM_ICDIR}/*sfc_data* )
     for atm_ic in ${atm_ics}; do
         f=$( basename ${atm_ic} )
         if [[ ${f:11:4} == '0000' ]]; then
@@ -185,7 +185,7 @@ LF+=(
 ["${FIX_DIR}/am/20220805/IMS-NIC.blended.ice.monthly.clim.grb"]="."
 ["${FIX_DIR}/am/20220805/RTGSST.1982.2012.monthly.clim.grb"]="."
 )
-if [ ${TILEDFIX} = .true. ]; then
+#if [ ${TILEDFIX} = .true. ]; then
 LF+=(
 ["${FIX_DIR}/am/20220805/global_albedo4.1x1.grb"]="."
 ["${FIX_DIR}/am/20220805/global_glacier.2x2.grb"]="."
@@ -199,7 +199,7 @@ LF+=(
 ["${FIX_DIR}/am/20220805/global_zorclim.1x1.grb"]="."
 ["${FIX_DIR}/am/20220805/seaice_newland.grb"]="."
 )
-fi
+#fi
 if [ ${WRITE_DOPOST} = .true. ]; then
 LF+=(
 ["${PATHRT}/parm/post_itag"]="itag"
