@@ -11,39 +11,51 @@ DT_2_RST=$(( RESTART_FREQ * 3600 ))
 
 ####################################
 # change grid if needed
-WAV_MOD_DEF=${WAV_MOD_DEF:-'default'}
-if [[ ${WAV_MOD_DEF} != 'default' ]]; then
-    if [[ ! -f ${WAV_MOD_DEF} ]]; then
-        echo "${WAV_MOD_DEF} file not found"
-        exit 1
-    fi
+WAV_RES=${WAV_RES:-gwes_30m}
+echo '  WAV_RES:' ${WAV_RES}
+if [[ ${WAV_RES} == 'gwes_30m' ]]; then
+    WAV_MOD_DEF=${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.gwes_30m
+    MESH_WAV=${FIX_DIR}/wave/20220805/mesh.gwes_30m.nc
+elif [[ ${WAV_RES} == 'mx025gefs' ]]; then
+    WAV_MOD_DEF=${NPB_FIX}/mod_def.mx025gefs.ww3
+    MESH_WAV=${FIX_DIR}/cice/20220805/025/mesh.mx025.nc
+elif [[ ${WAV_RES} == 'a' ]]; then
+    WAV_MOD_DEF=${NPB_FIX}/mod_def.a.ww3
+    MESH_WAV=${NPB_FIX}/mesh.a.nc
+elif [[ ${WAV_RES} == 'b' ]]; then
+    WAV_MOD_DEF=${NPB_FIX}/mod_def.b.ww3
+    MESH_WAV=${NPB_FIX}/mesh.b.nc
+elif [[ ${WAV_RES} == 'tripolar' ]]; then
+    WAV_MOD_DEF=${NPB_FIX}/mod_def.tripolar.ww3
+    MESH_WAV=${NPB_FIX}/mesh.tripolar.nc
+fi
+if [[ ${FIX_METHOD} == 'RT' ]]; then 
     cp ${WAV_MOD_DEF} mod_def.ww3
-    WAV_MESH=${WAV_MESH:-'default'}
-    if [[ ${WAV_MESH} != 'default' ]]; then
-        if [[ ! -f ${WAV_MESH} ]]; then
-            echo "${WAV_MESH} file not found"
-            exit 1
-        fi
-        ln -sf ${WAV_MESH} .
-        MESH_WAV=$(basename ${WAV_MESH})
-    else
-        MESH_WAV=mesh.mx025.nc
-    fi
+    cp ${WAV_MESH} .
+    cp ${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.points .
+else
+    LF+=(
+    ["${WAV_MOD_DEF}"]="mod_def.ww3"
+    ["${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.points"]="."
+    )
 fi
 
 ####################################
 # look for restarts if provided
-if [[ ${IC_DIR} != 'none' ]]; then
-    wav_ic=${IC_DIR}/wav/${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart.ww3.${WAV_RES}
+WAV_ICDIR=${WAV_ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/wav_p8c}
+wav_ic=${WAV_ICDIR}/${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart.ww3.${WAV_RES}
+if [[ ! -f ${wav_ic} ]]; then
+    echo "  WARNING: wav IC with RES not found, looking for a restart without RES defined"
+    wav_ic=${WAV_ICDIR}/wav/${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart.ww3
     if [[ ! -f ${wav_ic} ]]; then
-        wav_ic=${IC_DIR}/wav/${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart.ww3
-        echo "WARNING: wav IC with RES not found, looking for a restart without RES defined"
+         echo "  WAV IC not found, waves will cold start"
+    else
+        if [[ ${FIX_METHOD} == 'RT' ]]; then
+            ln -sf ${wav_ic} restart.ww3
+        else
+            LF+=(["${wav_ic}"]="restart.ww3")
+        fi
     fi
-    if [[ ! -f ${wav_ic} ]]; then
-        echo "${wav_ic} file not found"
-        exit 1
-    fi
-    ln -sf ${wav_ic} restart.ww3
 fi
 
 ####################################

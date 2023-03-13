@@ -15,18 +15,24 @@ WAV_GRID=${WAV_GRID:-'default'}
 [[ ${WAV_GRID} != 'default' ]] && MESH_WAV=$(basename ${WAV_GRID})
 
 ########################
-if [[ ${IC_DIR} != 'none' ]]; then
-    med_ic=$(ls ${IC_DIR}/med/*)
+if [[ ${FIX_METHOD} == 'LINK' ]]; then
+
+if [[ ${WARM_START} == '.true.' ]]; then
+    med_ic=$(ls ${MED_ICDIR}/*)
     if [[ ! -f ${med_ic} ]]; then
-        echo "${med_ic} file not found"
+        echo "  FATAL: ${med_ic} file not found"
         exit 1
     fi
-    ln -sf ${med_ic} ufs.cpld.cpl.r.nc
+    if [[ ${FIX_METHOD} == 'RT' ]]; then 
+        ln -sf ${med_ic} ufs.cpld.cpl.r.nc
+    else
+        LF+=(["${med_ic}"]="ufs.cpld.cpl.r.nc")
+    fi
     rm -f rpointer.cpl && touch rpointer.cpl
     echo "ufs.cpld.cpl.r.nc" >> "rpointer.cpl"
     RUNTYPE=continue
 fi
-
+fi
 ########################
 # write namelists files
 compute_petbounds_and_tasks

@@ -10,6 +10,7 @@ if [[ ${machine} == hfe* ]]; then
     dprefix=/scratch1/NCEPDEV
     DISKNM=$dprefix/nems/emc.nemspara/RT
     FIX_DIR=/scratch1/NCEPDEV/global/glopara/fix
+    NPB_FIX=/scratch2/NCEPDEV/stmp3/Neil.Barton/CODE/FIX
     SCHEDULER=slurm
     ACCNR=${ACCNR:-marine-cpu}
     QUEUE=batch
@@ -33,4 +34,9 @@ if [[ ${debug} == T ]]; then
 else
     export module_file=${UFS_HOME}/modulefiles/ufs_${machine}.${compiler}.lua
 fi    
+
+# directories
+INPUTDATA_ROOT=${INPUTDATA_ROOT:-${DISKNM}/NEMSfv3gfs/input-data-20221101}
+INPUTDATA_ROOT_BMIC=${INPUTDATA_ROOT_BMIC:-$DISKNM/NEMSfv3gfs/BM_IC-20220207}
+INPUTDATA_ROOT_WW3=${INPUTDATA_ROOT}/WW3_input_data_20220624
 

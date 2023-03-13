@@ -6,6 +6,7 @@ echo 'CICE-config.sh'
 ICE_OUTPUT=${ICE_OUTPUT:-F}
 RESTART_FREQ=${RESTART_FREQ:-$FHMAX}
 DUMPFREQ_N=$(( RESTART_FREQ / 24 ))
+mkdir -p history
 
 ####################################
 # determine block size from ICE_tasks and grid
@@ -27,24 +28,31 @@ fi
 
 ####################################
 # look for restarts if provided
-if [[ ${IC_DIR} != 'none' ]]; then
-    ice_ic=$(ls ${IC_DIR}/ice/*)
-    if [[ ! -f ${ice_ic} ]]; then
-        echo "${ice_ic} file not found"
-        exit 1
-    fi
-    rm -f cice_model.res.nc
-    ln -sf ${ice_ic} cice_model.res.nc
-    #ln -sf cice_model.res.nc ice.restart_in
-    #cp -f ${f} cice.restart_in
-    #CICERUNTYPE='continue'
-    #USE_RESTART_TIME=.true.
-    CICERUNTYPE='initial'
-    USE_RESTART_TIME=.false.
+ICE_ICDIR=${ICE_ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/cpc}
+ice_ic=$(ls ${ICE_ICDIR}/*)
+if [[ ! -f ${ice_ic} ]]; then
+    echo "  FATAL: ${ice_ic} file not found"
+    exit 1
+fi
+rm -f cice_model.res.nc
+if [[ ${FIX_METHOD} == 'RT' ]]; then
+    ln -sf ${IC_DIR}/ocn/* .
+else
+    LF+=(["${ice_ic}"]="cice_model.res.nc")
+fi
+CICERUNTYPE=${CICERUNTYPE:-'initial'}
+USE_RESTART_TIME=${CICE_USE_RESTART_TIME:-.false.}
 cat <<EOF > ice.restart_file
 cice_model.res.nc
 EOF
-fi
+
+####################################
+# fix files
+LF+=(
+["${FIX_DIR}/cice/20220805/${OCNRES}/grid_cice_NEMS_mx${OCNRES}.nc"]="."
+["${FIX_DIR}/cice/20220805/${OCNRES}/kmtu_cice_NEMS_mx${OCNRES}.nc"]="."
+["${FIX_DIR}/cice/20220805/${OCNRES}/mesh.mx${OCNRES}.nc"]="."
+)
 
 ####################################
 # parse namelist file

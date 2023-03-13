@@ -7,35 +7,36 @@ DEBUG=${DEBUG:-F}
 #   default is to run the S2SWA using the RT defaults
 #   TODOS:
 #       - link needed data instead of running ./fv3_run
-#       - add option to start with other ICs and start dates
 #       - not sure if field table in FV3-config.sh is needed
 ########################
-RUNDIR=${1} && mkdir -p ${RUNDIR} && cd ${RUNDIR}
+RUNDIR=${1} 
 UFS_HOME=${UFS_HOME:-${0%/*}}
 RT_TEST=${RT_TEST:-cpld_bmark_p8}
 
 echo "RUNDIR: ${RUNDIR}"
 ########################
 # delete run dir if needed
-dirs=$(find . -mindepth 1 -type d)
-for d in ${dirs}; do
-    #echo "REMOVING ${d}"
-    rm -r ${d}
-done
+if [[ -d ${RUNDIR} ]]; then
+    read -p 'RUNDIR exists, delete? (y or n) ' yn
+    case ${yn} in
+        [Yy]* ) rm -r ${RUNDIR};; 
+        [Nn]* ) RUNDIR=${RUNDIR}_$( date +%s );;
+        [u] ) echo "re-using RUNDIR";;
+        *) echo "Please answer yes or no";;
+    esac
+fi
+mkdir -p ${RUNDIR} && cd ${RUNDIR}
 
 ########################
 # defaults
+FIX_METHOD=${FIX_METHOD:-'LINK'} #RT for original method
 PATH_RUN=${PATH_RUN:-${UFS_HOME}/RUN}
 PATHRT=${UFS_HOME}/tests
 # tools
 source ${PATHRT}/rt_utils.sh
 source ${PATHRT}/atparse.bash
-# machine specific
+# machine specific directories
 source ${PATH_RUN}/MACHINE-config.sh
-# directories 
-INPUTDATA_ROOT=${INPUTDATA_ROOT:-${DISKNM}/NEMSfv3gfs/input-data-20221101}
-INPUTDATA_ROOT_BMIC=${INPUTDATA_ROOT_BMIC:-$DISKNM/NEMSfv3gfs/BM_IC-20220207}
-INPUTDATA_ROOT_WW3=${INPUTDATA_ROOT}/WW3_input_data_20220624
 # variables
 source ${PATHRT}/default_vars.sh
 source ${PATHRT}/tests/${RT_TEST}
@@ -45,25 +46,17 @@ source ${PATHRT}/tests/${RT_TEST}
 OCN_tasks=${OCN_NMPI:-$OCN_tasks}
 ICE_tasks=${ICE_NMPI:-$ICE_tasks}
 WAV_tasks=${WAV_NMPI:-$WAV_tasks}
-CHM_tasks=${CHM_NMPI:-$CHM_tasks}
+CHM_NMPI=${CHM_NMPI:-0}
+CHM_tasks=${CHM_NMPI:-$ATM_tasks}
 FL=${FORECAST_LENGTH:-1}
 FHMAX=$( echo "${FL} * 24" | bc )
 FHMAX=${FHMAX%.*}
-IC_DIR=${IC_DIR:-'none'}
 
 ########################
-# FV3_RUN TODO, change this
-FV3_RUN=${FV3_RUN:-cpld_control_run.IN}
-[[ -f fv3_run ]] && rm fv3_run
-for i in ${FV3_RUN}; do
-    atparse < ${PATHRT}/fv3_conf/${i} >> fv3_run
-done
-if [[ ${DEBUG} == F ]]; then
-    RT_SUFFIX=""
-    echo 'RUNNING fv3_run'
-    source ./fv3_run
+# FV3_RUN TODO
+if [[ ${FIX_METHOD} == 'RT' ]]; then
+    source ${PATH_RUN}/FIXFILES-rt-method.sh
 fi
-
 ########################
 # set year and default year for coupled bmark run
 DTG=${DTG:-${SYEAR}${SMONTH}${SDAY}${SHOUR}00}
@@ -81,6 +74,12 @@ source ${PATH_RUN}/MOM6-config.sh
 source ${PATH_RUN}/CICE-config.sh
 [[ ${WAV_tasks} != 0 ]] && source ${PATH_RUN}/WW3-config.sh 
 source ${PATH_RUN}/CMEPS-config.sh
+
+####################################
+# LINK needed files into RUNDIR
+if [[ ${FIX_METHOD} == 'LINK' ]]; then
+    source ${PATH_RUN}/FIXFILES-link.sh
+fi
 
 ########################
 # create job card
