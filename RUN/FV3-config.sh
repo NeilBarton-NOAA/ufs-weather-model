@@ -11,85 +11,9 @@ CCPP_SUITE=${CPP_SUITE:-FV3_GFS_v17_coupled_p8}
 DIAG_TABLE=${DIAG_TABLE:-diag_table_p8_template}
 
 ####################################
-# NMPI options and thread options
-INPES=${ATM_INPES:-$INPES}
-JNPES=${ATM_JNPES:-$JNPES}
-atm_omp_num_threads=${ATM_THRD:-${atm_omp_num_threads}}
-WPG=${ATM_WPG:-48}
-WRTTASK_PER_GROUP=$(( WPG * atm_omp_num_threads ))
-mkdir -p INPUT RESTART
-
-####################################
-#  input.nml edits based on components running
-[[ ${CHM_tasks} == 0 ]] && CPLCHM=.false.
-[[ ${WAV_tasks} == 0 ]] && CPLWAV=.false. && CPLWAV2ATM=.false.
-
-####################################
-# resolution options
-NPZ=${ATM_LEVELS:-127}
-NPZP=$(( NPZ + 1 ))
-case "${ATMRES}" in
-    "C384") DT_ATMOS=${ATM_DT:-$DT_ATMOS}
-            IMO=1536 
-            JMO=768
-            NPX=385
-            NPY=385;;
-esac
-
-####################################
-# IO options
-RESTART_N=${RESTART_FREQ:-${FHMAX}}
-OUTPUT_N=${OUTPUT_FREQ:-${FHMAX}}
-WRITE_DPOST=${WRITE_DPOST:-.false.}
-RESTART_INTERVAL="${RESTART_N} -1"
-OUTPUT_FH="${OUTPUT_N} -1"
-OUTPUT_FILE="'netcdf_parallel' 'netcdf_parallel'"
-
-####################################
-# namelist options 
-IMP_PHYSICS=${ATM_PHYSICS:-${IMP_PHYSICS}}
-ICHUNK2D=$(( 4 * ${ATMRES:1} ))
-JCHUNK2D=$(( 2 * ${ATMRES:1} ))
-ICHUNK3D=$(( 4 * ${ATMRES:1} ))
-JCHUNK3D=$(( 2 * ${ATMRES:1} ))
-KCHUNK3D=1
-IDEFLATE=1
-NBITS=14
-DNATS=0
-DOGP_CLDOPTICS_LUT=.false.
-DOGP_LWSCAT=.false.
-
-####################################
-# look for restarts if provided
+# restarts 
 if [[ ${FIX_METHOD} == 'LINK' ]]; then
-
 ATM_ICDIR=${ATM_ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/p8c/${ATMRES}_L${NPZ}/INPUT}
-        #C384_grid.tile1.nc
-        #C384_grid.tile2.nc
-        #C384_grid.tile3.nc
-        #C384_grid.tile4.nc
-        #C384_grid.tile5.nc
-        #C384_grid.tile6.nc
-        #C384_mosaic.nc
-        #grid_spec.nc
-        #oro_data.tile1.nc
-        #oro_data.tile2.nc
-        #oro_data.tile3.nc
-        #oro_data.tile4.nc
-        #oro_data.tile5.nc
-        #oro_data.tile6.nc
-        #oro_data_ls.tile1.nc
-        #oro_data_ls.tile2.nc
-        #oro_data_ls.tile3.nc
-        #oro_data_ls.tile4.nc
-        #oro_data_ls.tile5.nc
-        #oro_data_ls.tile6.nc
-        #oro_data_ss.tile1.nc
-        #oro_data_ss.tile2.nc
-        #oro_data_ss.tile3.nc
-        #oro_data_ss.tile4.nc
-        #oro_data_ss.tile5.nc
-        #oro_data_ss.tile6.nc
 n_files=$( ls ${ATM_ICDIR}/*nc 2>/dev/null | wc -l )
 if (( ${n_files} == 0 )); then
     echo '  FATAL: no atm ICs found in:' ${ATM_ICDIR}
@@ -107,7 +31,13 @@ if (( ${n_files} == (( NTILES * 2 )) )); then
     LF+=(["${ATM_ICDIR}/gfs_ctrl.nc"]="INPUT/")
 else #ATM WARMSTART
     echo "  FV3 Warm Start"
-    atm_ics=$( ls ${ATM_ICDIR}/*ca_data*nc ${ATM_ICDIR}/*fv_core.res* ${ATM_ICDIR}/*fv_srf_wnd.res* ${ATM_ICDIR}/*fv_srf_wnd.res* ${ATM_ICDIR}/*fv_tracer* ${ATM_ICDIR}/*phy_data* ${ATM_ICDIR}/*sfc_data* )
+    atm_ics=$( ls ${ATM_ICDIR}/*ca_data*nc\
+                  ${ATM_ICDIR}/*fv_core.res*nc\
+                  ${ATM_ICDIR}/*fv_srf_wnd.res*nc\
+                  ${ATM_ICDIR}/*fv_srf_wnd.res*nc\
+                  ${ATM_ICDIR}/*fv_tracer*nc\
+                  ${ATM_ICDIR}/*phy_data*nc\
+                  ${ATM_ICDIR}/*sfc_data* )
     for atm_ic in ${atm_ics}; do
         f=$( basename ${atm_ic} )
         if [[ ${f:11:4} == '0000' ]]; then
@@ -135,12 +65,70 @@ fi #cold start/warm start
 fi #LINK
 
 ####################################
+# IO options
+RESTART_N=${RESTART_FREQ:-${FHMAX}}
+OUTPUT_N=${OUTPUT_FREQ:-${FHMAX}}
+WRITE_DOPOST=${DOPOST_WRITE:-.false.}
+RESTART_INTERVAL="${RESTART_N} -1"
+OUTPUT_FH="${OUTPUT_N} -1"
+OUTPUT_FILE="'netcdf_parallel' 'netcdf_parallel'"
+QUILTING=${FV3_QUILTING:-.false.}
+[[ ${QUILTING} == '.false.' ]] && OUTPUT_HISTORY=.false.
+
+####################################
+# NMPI options and thread options
+INPES=${ATM_INPES:-$INPES}
+JNPES=${ATM_JNPES:-$JNPES}
+atm_omp_num_threads=${ATM_THRD:-${atm_omp_num_threads}}
+[[ ${QUILTING} == '.false.' ]] && ATM_WPG=0
+WPG=${ATM_WPG:-48}
+WRTTASK_PER_GROUP=$(( WPG * atm_omp_num_threads ))
+mkdir -p INPUT RESTART
+
+####################################
+# resolution options
+NPZ=${ATM_LEVELS:-127}
+NPZP=$(( NPZ + 1 ))
+case "${ATMRES}" in
+    "C384") DT_ATMOS=${ATM_DT:-$DT_ATMOS}
+            IMO=1536 
+            JMO=768
+            NPX=385
+            NPY=385;;
+esac
+
+####################################
+#  input.nml edits based on components running
+[[ ${CHM_tasks} == 0 ]] && CPLCHM=.false.
+[[ ${WAV_tasks} == 0 ]] && CPLWAV=.false. && CPLWAV2ATM=.false.
+
+####################################
+# namelist options 
+IMP_PHYSICS=${ATM_PHYSICS:-${IMP_PHYSICS}}
+ICHUNK2D=$(( 4 * ${ATMRES:1} ))
+JCHUNK2D=$(( 2 * ${ATMRES:1} ))
+ICHUNK3D=$(( 4 * ${ATMRES:1} ))
+JCHUNK3D=$(( 2 * ${ATMRES:1} ))
+KCHUNK3D=1
+IDEFLATE=1
+NBITS=14
+DNATS=0
+DOGP_CLDOPTICS_LUT=.false.
+DOGP_LWSCAT=.false.
+
+####################################
 # parse namelist files
 atparse < ${PATHRT}/parm/${INPUT_NML} > input.nml
 atparse < ${PATHRT}/parm/${MODEL_CONFIGURE} > model_configure
-atparse < ${PATHRT}/parm/diag_table/${DIAG_TABLE} > diag_table
 cp ${PATHRT}/parm/field_table/${FIELD_TABLE} field_table #TODO: not sure if field_table is needed
-
+if [[ ${QUILTING} == '.true.' ]]; then
+    atparse < ${PATHRT}/parm/diag_table/${DIAG_TABLE} > diag_table
+else
+cat <<EOF > diag_table
+${SYEAR}${SMONTH}${SDAY}.${SHOUR}Z.${ATMRES}.64bit.non-mono
+${SYEAR} ${SMONTH} ${SDAY} ${SHOUR} 0 0
+EOF
+fi
 ####################################
 # FIX FILES
 #["${INPUTDATA_ROOT}/FV3_fix/postxconfig-NT.txt"]="."

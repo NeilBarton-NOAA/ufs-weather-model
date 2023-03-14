@@ -5,43 +5,9 @@ echo 'WW3-config.sh'
 wav_omp_num_threads=${WAV_THRD:-${wav_omp_num_threads}}
 
 ####################################
-# IO options
-RESTART_FREQ=${RESTART_FREQ:-$FHMAX}
-DT_2_RST=$(( RESTART_FREQ * 3600 )) 
-
-####################################
-# change grid if needed
+# look for restarts if provided
 WAV_RES=${WAV_RES:-gwes_30m}
 echo '  WAV_RES:' ${WAV_RES}
-if [[ ${WAV_RES} == 'gwes_30m' ]]; then
-    WAV_MOD_DEF=${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.gwes_30m
-    MESH_WAV=${FIX_DIR}/wave/20220805/mesh.gwes_30m.nc
-elif [[ ${WAV_RES} == 'mx025gefs' ]]; then
-    WAV_MOD_DEF=${NPB_FIX}/mod_def.mx025gefs.ww3
-    MESH_WAV=${FIX_DIR}/cice/20220805/025/mesh.mx025.nc
-elif [[ ${WAV_RES} == 'a' ]]; then
-    WAV_MOD_DEF=${NPB_FIX}/mod_def.a.ww3
-    MESH_WAV=${NPB_FIX}/mesh.a.nc
-elif [[ ${WAV_RES} == 'b' ]]; then
-    WAV_MOD_DEF=${NPB_FIX}/mod_def.b.ww3
-    MESH_WAV=${NPB_FIX}/mesh.b.nc
-elif [[ ${WAV_RES} == 'tripolar' ]]; then
-    WAV_MOD_DEF=${NPB_FIX}/mod_def.tripolar.ww3
-    MESH_WAV=${NPB_FIX}/mesh.tripolar.nc
-fi
-if [[ ${FIX_METHOD} == 'RT' ]]; then 
-    cp ${WAV_MOD_DEF} mod_def.ww3
-    cp ${WAV_MESH} .
-    cp ${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.points .
-else
-    LF+=(
-    ["${WAV_MOD_DEF}"]="mod_def.ww3"
-    ["${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.points"]="."
-    )
-fi
-
-####################################
-# look for restarts if provided
 WAV_ICDIR=${WAV_ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/wav_p8c}
 wav_ic=${WAV_ICDIR}/${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart.ww3.${WAV_RES}
 if [[ ! -f ${wav_ic} ]]; then
@@ -57,6 +23,42 @@ if [[ ! -f ${wav_ic} ]]; then
         fi
     fi
 fi
+
+####################################
+# change grid if needed
+if [[ ${WAV_RES} == 'gwes_30m' ]]; then
+    WAV_MOD_DEF=${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.gwes_30m
+    MESH_WAV=${FIX_DIR}/wave/20220805/mesh.gwes_30m.nc
+elif [[ ${WAV_RES} == 'mx025gefs' ]]; then
+    WAV_MOD_DEF=${NPB_FIX}/mod_def.mx025gefs.ww3
+    MESH_WAV=${FIX_DIR}/cice/20220805/025/mesh.mx025.nc
+elif [[ ${WAV_RES} == 'a' ]]; then
+    WAV_MOD_DEF=${NPB_FIX}/mod_def.a.ww3
+    MESH_WAV=${NPB_FIX}/mesh.a.nc
+elif [[ ${WAV_RES} == 'b' ]]; then
+    WAV_MOD_DEF=${NPB_FIX}/mod_def.b.ww3
+    MESH_WAV=${NPB_FIX}/mesh.b.nc
+elif [[ ${WAV_RES} == 'tripolar' ]]; then
+    WAV_MOD_DEF=${NPB_FIX}/mod_def.tripolar.ww3
+    MESH_WAV=${FIX_DIR}/cice/20220805/025/mesh.mx025.nc
+fi
+if [[ ${FIX_METHOD} == 'RT' ]]; then 
+    cp ${WAV_MOD_DEF} mod_def.ww3
+    cp ${WAV_MESH} .
+    cp ${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.points .
+else
+    LF+=(
+    ["${WAV_MOD_DEF}"]="mod_def.ww3"
+    ["${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.points"]="."
+    )
+fi
+
+####################################
+# IO options
+RESTART_FREQ=${RESTART_FREQ:-$FHMAX}
+DT_2_RST=$(( RESTART_FREQ * 3600 )) 
+DTFLD=${WW3_DTFLD:-${DT_2_RST}}
+DTPNT=${WW3_DTPNT:-${DT_2_RST}}
 
 ####################################
 #parse namelist file
