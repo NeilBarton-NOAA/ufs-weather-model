@@ -73,7 +73,7 @@ RESTART_INTERVAL="${RESTART_N} -1"
 OUTPUT_FH="${OUTPUT_N} -1"
 OUTPUT_FILE="'netcdf_parallel' 'netcdf_parallel'"
 QUILTING=${FV3_QUILTING:-.false.}
-[[ ${QUILTING} == '.false.' ]] && OUTPUT_HISTORY=.false.
+#[[ ${QUILTING} == '.false.' ]] && OUTPUT_HISTORY=.false. # not sure what OUTPUT_HISTORY controls
 
 ####################################
 # NMPI options and thread options
