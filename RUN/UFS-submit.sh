@@ -13,18 +13,18 @@ RUNDIR=${1}
 UFS_HOME=${UFS_HOME:-${0%/*}}
 RT_TEST=${RT_TEST:-cpld_bmark_p8}
 
-echo "RUNDIR: ${RUNDIR}"
 ########################
 # delete run dir if needed
 if [[ -d ${RUNDIR} ]]; then
-    read -p 'RUNDIR exists, delete? (y or n) ' yn
-    case ${yn} in
-        [Yy]* ) rm -r ${RUNDIR};; 
-        [Nn]* ) RUNDIR=${RUNDIR}_$( date +%s );;
+    read -p 'RUNDIR exists, Delete existing directory? (d) or Create new directory (c) ' ans
+    case ${ans} in
+        [Dd]* ) rm -r ${RUNDIR};; 
+        [Cc]* ) RUNDIR=${RUNDIR}_$( date +%s );;
         [u] ) echo "re-using RUNDIR";;
         *) echo "Please answer yes or no";;
     esac
 fi
+echo "RUNDIR: ${RUNDIR}"
 mkdir -p ${RUNDIR} && cd ${RUNDIR}
 
 ########################
