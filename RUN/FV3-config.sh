@@ -43,7 +43,7 @@ else #ATM WARMSTART
                 *phy_data*nc \
                 *sfc_data*nc'
     for warm_file in ${warm_files}; do
-        files=$( find ${ATM_ICDIR} -name "${atm_ic}" )
+        files=$( find ${ATM_ICDIR} -name "${warm_file}" )
         for atm_ic in ${files}; do
             f=$( basename ${atm_ic} )
             if [[ ${f:11:4} == '0000' ]]; then
