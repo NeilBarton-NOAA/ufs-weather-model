@@ -86,7 +86,7 @@ JNPES=${ATM_JNPES:-$JNPES}
 atm_omp_num_threads=${ATM_THRD:-${atm_omp_num_threads}}
 WPG=${ATM_WPG:-0}
 WRTTASK_PER_GROUP=$(( WPG * atm_omp_num_threads ))
-[[ ${WPG} == 0 ]] && QUILTING = '.false'
+[[ ${WPG} == 0 ]] && QUILTING='.false.'
 
 ####################################
 # resolution options
