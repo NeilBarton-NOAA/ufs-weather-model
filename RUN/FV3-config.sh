@@ -3,7 +3,8 @@ set -u
 declare -A LF
 LF=()
 echo 'FV3-config.sh'
-mkdir -p INPUT
+mkdir -p INPUT RESTART
+
 ####################################
 # namelist defaults
 INPUT_NML=${INPUT_NML:-cpld_control.nml.IN}
@@ -14,39 +15,42 @@ DIAG_TABLE=${DIAG_TABLE:-diag_table_p8_template}
 ####################################
 # restarts 
 if [[ ${FIX_METHOD} == 'LINK' ]]; then
-ATM_ICDIR=${ATM_ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/p8c/${ATMRES}_L${NPZ}/INPUT}
-n_files=$( ls ${ATM_ICDIR}/*nc 2>/dev/null | wc -l )
+ATM_ICDIR=${ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/p8c/${ATMRES}_L${NPZ}/INPUT}
+n_files=$( find ${ATM_ICDIR} -name "*sfc_data*nc" 2>/dev/null | wc -l )
 if (( ${n_files} == 0 )); then
     echo '  FATAL: no atm ICs found in:' ${ATM_ICDIR}
     exit 1
 fi
-n_files=$( ls ${ATM_ICDIR}/gfs_data* ${ATM_ICDIR}/sfc_data* 2>/dev/null | wc -l)
-if (( ${n_files} == (( NTILES * 2 )) )); then
+n_files=$( find ${ATM_ICDIR} -name "*gfs_data*.nc" 2>/dev/null | wc -l)
+if (( ${n_files} == (( NTILES )) )); then
     echo "  FV3 Cold Start"
     PREFIXS="gfs_data sfc_data"
     for t in $(seq ${NTILES}); do
         for v in ${PREFIXS}; do
-            LF+=(["${ATM_ICDIR}/${v}.tile${t}.nc"]="INPUT/")
+            f=$( find ${ATM_ICDIR} -name "${v}.tile${t}.nc" )
+            LF+=(["${f}"]="INPUT/")
         done
     done
-    LF+=(["${ATM_ICDIR}/gfs_ctrl.nc"]="INPUT/")
+    f=$( find ${ATM_ICDIR} -name "gfs_ctrl.nc" )
+    LF+=(["${f}"]="INPUT/")
 else #ATM WARMSTART
     echo "  FV3 Warm Start"
-    atm_ics=$( ls ${ATM_ICDIR}/*ca_data*nc\
-                  ${ATM_ICDIR}/*fv_core.res*nc\
-                  ${ATM_ICDIR}/*fv_srf_wnd.res*nc\
-                  ${ATM_ICDIR}/*fv_srf_wnd.res*nc\
-                  ${ATM_ICDIR}/*fv_tracer*nc\
-                  ${ATM_ICDIR}/*phy_data*nc\
-                  ${ATM_ICDIR}/*sfc_data* )
-    for atm_ic in ${atm_ics}; do
-        f=$( basename ${atm_ic} )
-        if [[ ${f:11:4} == '0000' ]]; then
-            f=${f:16}
-        fi
-        LF+=(
-        ["${atm_ic}"]="INPUT/${f}"
-        )
+    warm_files='*ca_data*nc \
+                *fv_core.res*nc \
+                *fv_srf_wnd.res*nc \
+                *fv_srf_wnd.res*nc \
+                *fv_tracer*nc \
+                *phy_data*nc \
+                *sfc_data*nc'
+    for warm_file in ${warm_files}; do
+        files=$( find ${ATM_ICDIR} -name "${atm_ic}" )
+        for atm_ic in ${files}; do
+            f=$( basename ${atm_ic} )
+            if [[ ${f:11:4} == '0000' ]]; then
+                f=${f:16}
+            fi
+            LF+=(["${atm_ic}"]="INPUT/${f}")
+        done
     done
     # make coupler.res file
     cat >> INPUT/coupler.res << EOF
@@ -84,7 +88,6 @@ atm_omp_num_threads=${ATM_THRD:-${atm_omp_num_threads}}
 [[ ${QUILTING} == '.false.' ]] && ATM_WPG=0
 WPG=${ATM_WPG:-48}
 WRTTASK_PER_GROUP=$(( WPG * atm_omp_num_threads ))
-mkdir -p INPUT RESTART
 
 ####################################
 # resolution options

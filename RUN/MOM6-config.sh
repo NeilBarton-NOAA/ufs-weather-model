@@ -1,6 +1,7 @@
 #!/bin/sh
 echo 'MOM6-config.sh'
 MOM_INPUT=${MOM_INPUT:-MOM_input_template_${OCNRES}}
+ocn_omp_num_threads=${OCN_THRD:-${ocn_omp_num_threads}}
 mkdir -p INPUT MOM6_OUTPUT
 
 ####################################
@@ -9,8 +10,8 @@ mkdir -p INPUT MOM6_OUTPUT
 
 ####################################
 # look for restarts if provided
-OCN_ICDIR=${OCN_ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/mom6_da}
-n_files=$( ls ${OCN_ICDIR}/MOM.res*nc 2>/dev/null | wc -l )
+OCN_ICDIR=${ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/mom6_da}
+n_files=$( find ${OCN_ICDIR} -name "MOM.res*nc" 2>/dev/null | wc -l )
 if (( ${n_files} == 0 )); then
     echo '   FATAL: no ocn ICs found in:' ${OCN_ICDIR}
     exit 1
@@ -18,7 +19,7 @@ fi
 if [[ ${FIX_METHOD} == 'RT' ]]; then
     ln -sf ${IC_DIR}/ocn/* .
 else
-   ocn_ics=$( ls ${OCN_ICDIR}/MOM.res*nc )
+   ocn_ics=$( find ${OCN_ICDIR} -name "MOM.res*nc" 2>/dev/null )
    for ocn_ic in ${ocn_ics}; do
     LF+=(["${ocn_ic}"]="INPUT/")
    done

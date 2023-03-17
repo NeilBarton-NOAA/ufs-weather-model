@@ -8,11 +8,11 @@ wav_omp_num_threads=${WAV_THRD:-${wav_omp_num_threads}}
 # look for restarts if provided
 WAV_RES=${WAV_RES:-gwes_30m}
 echo '  WAV_RES:' ${WAV_RES}
-WAV_ICDIR=${WAV_ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/wav_p8c}
-wav_ic=${WAV_ICDIR}/${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart.ww3.${WAV_RES}
+WAV_ICDIR=${ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/wav_p8c}
+wav_ic=$( find ${WAV_ICDIR} -name "${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart*${WAV_RES}" )
 if [[ ! -f ${wav_ic} ]]; then
     echo "  WARNING: wav IC with RES not found, looking for a restart without RES defined"
-    wav_ic=${WAV_ICDIR}/wav/${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart.ww3
+    wav_ic=$( find ${WAV_ICDIR} -name "${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart" )
 fi
 
 if [[ ! -f ${wav_ic} ]]; then

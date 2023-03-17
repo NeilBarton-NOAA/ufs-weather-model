@@ -2,23 +2,15 @@
 set -u
 echo 'CMEPS-config.sh'
 NEMS_CONFIGURE=${NEMS_CONFIGURE:-${PATHRT}/parm/nems.configure.cpld_esmfthreads.IN}
-PET_LOGS=${PETLOGS:-F}
-MED_tasks=${MED_NMPI:-$(( INPES * JNPES * atm_omp_num_threads ))}
-med_omp_num_threads=${atm_omp_num_threads}
-
-########################
-# options based on other active components
 [[ ${CHM_tasks} == 0 && ${WAV_tasks} == 0 ]] && NEMS_CONFIGURE=${PATHRT}/parm/nems.configure.cpld_noaero_nowave.IN
 [[ ${CHM_tasks} == 0 && ${WAV_tasks} != 0 ]] && NEMS_CONFIGURE=${PATHRT}/parm/nems.configure.cpld_noaero_outwav.IN
 #[[ ${CHM_NMPI} == 0 && ${WAV_NMPI} != 0 ]] && NEMS_CONFIGURE=${PATHRT}/parm/nems.configure.cpld_noaero.IN
-WAV_GRID=${WAV_GRID:-'default'}
-[[ ${WAV_GRID} != 'default' ]] && MESH_WAV=$(basename ${WAV_GRID})
+PET_LOGS=${PETLOGS:-F}
 
 ########################
-if [[ ${FIX_METHOD} == 'LINK' ]]; then
-
+# ICs
 if [[ ${WARM_START} == '.true.' ]]; then
-    med_ic=$(ls ${MED_ICDIR}/*ufs.cpld.cpl.r*)
+    med_ic=$( find ${ICDIR} -name "*ufs.cpld.cpl.r*")
     if [[ ! -f ${med_ic} ]]; then
         echo "  FATAL: ${med_ic} file not found"
         exit 1
@@ -32,7 +24,17 @@ if [[ ${WARM_START} == '.true.' ]]; then
     echo "ufs.cpld.cpl.r.nc" >> "rpointer.cpl"
     RUNTYPE=continue
 fi
-fi
+
+########################
+# mpi tasks
+MED_tasks=${MED_NMPI:-$(( INPES * JNPES * atm_omp_num_threads ))}
+med_omp_num_threads=${atm_omp_num_threads}
+
+########################
+# options based on other active components
+WAV_GRID=${WAV_GRID:-'default'}
+[[ ${WAV_GRID} != 'default' ]] && MESH_WAV=$(basename ${WAV_GRID})
+
 ########################
 # write namelists files
 compute_petbounds_and_tasks
