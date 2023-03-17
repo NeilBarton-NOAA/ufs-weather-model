@@ -3,6 +3,7 @@ set -u
 declare -A LF
 LF=()
 echo 'FV3-config.sh'
+mkdir -p INPUT
 ####################################
 # namelist defaults
 INPUT_NML=${INPUT_NML:-cpld_control.nml.IN}
