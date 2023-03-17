@@ -77,7 +77,6 @@ WRITE_DOPOST=${DOPOST_WRITE:-.false.}
 RESTART_INTERVAL="${RESTART_N} -1"
 OUTPUT_FH="${OUTPUT_N} -1"
 OUTPUT_FILE="'netcdf_parallel' 'netcdf_parallel'"
-QUILTING=${FV3_QUILTING:-.false.}
 #[[ ${QUILTING} == '.false.' ]] && OUTPUT_HISTORY=.false. # not sure what OUTPUT_HISTORY controls
 
 ####################################
@@ -85,9 +84,9 @@ QUILTING=${FV3_QUILTING:-.false.}
 INPES=${ATM_INPES:-$INPES}
 JNPES=${ATM_JNPES:-$JNPES}
 atm_omp_num_threads=${ATM_THRD:-${atm_omp_num_threads}}
-[[ ${QUILTING} == '.false.' ]] && ATM_WPG=0
-WPG=${ATM_WPG:-48}
+WPG=${ATM_WPG:-0}
 WRTTASK_PER_GROUP=$(( WPG * atm_omp_num_threads ))
+[[ ${WPG} == 0 ]] && QUILTING = '.false'
 
 ####################################
 # resolution options
