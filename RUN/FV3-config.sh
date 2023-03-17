@@ -38,7 +38,6 @@ else #ATM WARMSTART
     warm_files='*ca_data*nc \
                 *fv_core.res*nc \
                 *fv_srf_wnd.res*nc \
-                *fv_srf_wnd.res*nc \
                 *fv_tracer*nc \
                 *phy_data*nc \
                 *sfc_data*nc'
