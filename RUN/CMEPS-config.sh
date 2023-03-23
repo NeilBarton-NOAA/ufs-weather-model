@@ -42,4 +42,3 @@ cp ${PATHRT}/parm/fd_nems.yaml fd_nems.yaml
 atparse < ${NEMS_CONFIGURE} > nems.configure
 # post edits
 [[ ${PET_LOGS} == F ]] && sed -i "s:ESMF_LOGKIND_MULTI:ESMF_LOGKIND_MULTI_ON_ERROR:g" nems.configure
-

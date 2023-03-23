@@ -130,6 +130,10 @@ ${SYEAR}${SMONTH}${SDAY}.${SHOUR}Z.${ATMRES}.64bit.non-mono
 ${SYEAR} ${SMONTH} ${SDAY} ${SHOUR} 0 0
 EOF
 fi
+# TODO add to file
+#ICHUNK2D=$(( 4 * ${ATMRES:1} ))
+#JCHUNK2D=$(( 2 * ${ATMRES:1} ))
+
 ####################################
 # FIX FILES
 #["${INPUTDATA_ROOT}/FV3_fix/postxconfig-NT.txt"]="."

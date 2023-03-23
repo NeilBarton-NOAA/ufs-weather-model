@@ -24,14 +24,15 @@ EOF
 
 ####################################
 # IO options
-ICE_OUTPUT=${ICE_OUTPUT:-F}
+CICE_OUTPUT=${CICE_OUTPUT:-F}
 RESTART_FREQ=${RESTART_FREQ:-$FHMAX}
 DUMPFREQ_N=$(( RESTART_FREQ / 24 ))
+CICE_HIST_AVG='.true.'
 
 ####################################
 # determine block size from ICE_tasks and grid
 NPROC_ICE=${ICE_tasks}
-ice_omp_num_threads=${UCE_THRD:-${ice_omp_num_threads}}
+ice_omp_num_threads=${ICE_THRD:-${ice_omp_num_threads}}
 cice_processor_shape=${CICE_DECOMP:-'slenderX2'}
 shape=${cice_processor_shape#${cice_processor_shape%?}}
 NPX=$(( ICE_tasks / shape )) #number of processors in x direction
@@ -58,8 +59,12 @@ LF+=(
 ####################################
 # parse namelist file
 atparse < ${PATHRT}/parm/ice_in_template > ice_in
-if [[ ${ICE_OUTPUT} == F ]]; then
+if [[ ${CICE_OUTPUT} == F ]]; then
     sed -i "s:histfreq       = 'm','d','h','x','x':histfreq       = 'x','x','x','x','x':g"  ice_in
     sed -i "s:histfreq_n     =  0 , 0 , 6 , 1 , 1:histfreq_n     =  0 , 0 , 0 , 0 , 0:g" ice_in
+else
+    sed -i "s:histfreq       = 'm','d','h','x','x':histfreq       = 'm','d','h','x','x':g"  ice_in
+    sed -i "s:histfreq_n     =  0 , 0 , 6 , 1 , 1:histfreq_n     =  0 , 1 , 0 , 0 , 0:g" ice_in
+
 fi
 
