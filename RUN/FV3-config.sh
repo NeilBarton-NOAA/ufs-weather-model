@@ -11,10 +11,10 @@ INPUT_NML=${INPUT_NML:-cpld_control.nml.IN}
 MODEL_CONFIGURE=${MODEL_CONFIGURE:-model_configure.IN}
 CCPP_SUITE=${CPP_SUITE:-FV3_GFS_v17_coupled_p8}
 DIAG_TABLE=${DIAG_TABLE:-diag_table_p8_template}
+FIELD_TABLE=${FIELD_TABLE:-field_table_thompson_noaero_tke_GOCART}
 
 ####################################
 # restarts 
-if [[ ${FIX_METHOD} == 'LINK' ]]; then
 ATM_ICDIR=${ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/p8c/${ATMRES}_L${NPZ}/INPUT}
 n_files=$( find ${ATM_ICDIR} -name "*sfc_data*nc" 2>/dev/null | wc -l )
 if (( ${n_files} == 0 )); then
@@ -28,7 +28,11 @@ if (( ${n_files} == (( NTILES )) )); then
     for t in $(seq ${NTILES}); do
         for v in ${PREFIXS}; do
             f=$( find ${ATM_ICDIR} -name "${v}.tile${t}.nc" )
-            LF+=(["${f}"]="INPUT/")
+            if [[ ${FIX_METHOD} == 'LINK' ]]; then
+                LF+=(["${f}"]="INPUT/")
+            else
+                cp ${f} INPUT/
+            fi
         done
     done
     f=$( find ${ATM_ICDIR} -name "gfs_ctrl.nc" )
@@ -48,7 +52,11 @@ else #ATM WARMSTART
             if [[ ${f:11:4} == '0000' ]]; then
                 f=${f:16}
             fi
-            LF+=(["${atm_ic}"]="INPUT/${f}")
+            if [[ ${FIX_METHOD} == 'LINK' ]]; then
+                LF+=(["${atm_ic}"]="INPUT/${f}")
+            else
+                cp ${atm_ic} INPUT/${f}
+            fi
         done
     done
     # make coupler.res file
@@ -66,7 +74,6 @@ EOF
     MOUNTAIN=.true.
     TILEDFIX=.true.
 fi #cold start/warm start
-fi #LINK
 
 ####################################
 # IO options
@@ -75,7 +82,6 @@ OUTPUT_N=${OUTPUT_FREQ:-${FHMAX}}
 RESTART_INTERVAL="${RESTART_N} -1"
 OUTPUT_FH="${OUTPUT_N} -1"
 OUTPUT_FILE="'netcdf_parallel' 'netcdf_parallel'"
-#[[ ${QUILTING} == '.false.' ]] && OUTPUT_HISTORY=.false. # not sure what OUTPUT_HISTORY controls
 
 ####################################
 # NMPI options and thread options
@@ -100,7 +106,7 @@ esac
 
 ####################################
 #  input.nml edits based on components running
-[[ ${CHM_tasks} == 0 ]] && CPLCHM=.false.
+[[ ${CHM_tasks} == 0 ]] && CPLCHM=.false. && FIELD_TABLE=field_table_thompson_noaero_tke_progsigma
 [[ ${WAV_tasks} == 0 ]] && CPLWAV=.false. && CPLWAV2ATM=.false.
 
 ####################################
@@ -118,10 +124,10 @@ DOGP_CLDOPTICS_LUT=.false.
 DOGP_LWSCAT=.false.
 
 ####################################
-# parse namelist files
+# parse and edit namelist files
 atparse < ${PATHRT}/parm/${INPUT_NML} > input.nml
 atparse < ${PATHRT}/parm/${MODEL_CONFIGURE} > model_configure
-cp ${PATHRT}/parm/field_table/${FIELD_TABLE} field_table #TODO: not sure if field_table is needed
+cp ${PATHRT}/parm/field_table/${FIELD_TABLE} field_table 
 if [[ ${QUILTING} == '.true.' ]]; then
     atparse < ${PATHRT}/parm/diag_table/${DIAG_TABLE} > diag_table
 else
@@ -130,14 +136,13 @@ ${SYEAR}${SMONTH}${SDAY}.${SHOUR}Z.${ATMRES}.64bit.non-mono
 ${SYEAR} ${SMONTH} ${SDAY} ${SHOUR} 0 0
 EOF
 fi
-# TODO add to file
+
+# TODO add to file input.nml (on cactus)
 #ICHUNK2D=$(( 4 * ${ATMRES:1} ))
 #JCHUNK2D=$(( 2 * ${ATMRES:1} ))
 
 ####################################
 # FIX FILES
-#["${INPUTDATA_ROOT}/FV3_fix/postxconfig-NT.txt"]="."
-#["${INPUTDATA_ROOT}/FV3_fix/postxconfig-NT_FH00.txt"]="."
 LF+=(
 ["${INPUTDATA_ROOT}/FV3_fix/fix_co2_proj/co2historicaldata_2009.txt"]="."
 ["${INPUTDATA_ROOT}/FV3_fix/fix_co2_proj/co2historicaldata_2011.txt"]="."
