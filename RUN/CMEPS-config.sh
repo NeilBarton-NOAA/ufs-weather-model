@@ -4,7 +4,6 @@ echo 'CMEPS-config.sh'
 NEMS_CONFIGURE=${NEMS_CONFIGURE:-${PATHRT}/parm/nems.configure.cpld_esmfthreads.IN}
 [[ ${CHM_tasks} == 0 && ${WAV_tasks} == 0 ]] && NEMS_CONFIGURE=${PATHRT}/parm/nems.configure.cpld_noaero_nowave.IN
 [[ ${CHM_tasks} == 0 && ${WAV_tasks} != 0 ]] && NEMS_CONFIGURE=${PATHRT}/parm/nems.configure.cpld_noaero_outwav.IN
-#[[ ${CHM_NMPI} == 0 && ${WAV_NMPI} != 0 ]] && NEMS_CONFIGURE=${PATHRT}/parm/nems.configure.cpld_noaero.IN
 PET_LOGS=${PETLOGS:-F}
 
 ########################

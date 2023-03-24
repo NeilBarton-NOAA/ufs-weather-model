@@ -27,6 +27,7 @@ fi
 
 ####################################
 # change grid if needed
+${PATH_RUN}/FIX-from-hpss.sh ${WAV_RES} ${NPB_FIX} 
 if [[ ${WAV_RES} == 'gwes_30m' ]]; then
     WAV_MOD_DEF=${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.gwes_30m
     MESH_WAV=${FIX_DIR}/wave/20220805/mesh.gwes_30m.nc
