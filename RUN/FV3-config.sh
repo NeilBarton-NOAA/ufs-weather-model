@@ -137,9 +137,10 @@ ${SYEAR} ${SMONTH} ${SDAY} ${SHOUR} 0 0
 EOF
 fi
 
-# TODO add to file input.nml (on cactus)
-#ICHUNK2D=$(( 4 * ${ATMRES:1} ))
-#JCHUNK2D=$(( 2 * ${ATMRES:1} ))
+# add options to namelist files
+ln=$(grep -wn nbits model_configure | cut -d: -f1) && ln=$(( ln + 1))
+sed -i "${ln} i ichunk2d:                $(( 4 * ${ATMRES:1} ))" model_configure && ln=$(( ln + 1))
+sed -i "${ln} i jchunk2d:                $(( 2 * ${ATMRES:1} ))" model_configure
 
 ####################################
 # FIX FILES
