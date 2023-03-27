@@ -19,9 +19,8 @@ if [[ -d ${RUNDIR} ]]; then
     if [[ ${DEBUG} == F ]]; then
         read -p 'RUNDIR exists, Delete existing directory? (d) or Create new directory (c) ' ans
         case ${ans} in
-            [Dd]* ) rm -r ${RUNDIR};; 
+            [Dd]* ) rm -r ${RUNDIR}/*;; 
             [Cc]* ) RUNDIR=${RUNDIR}_$( date +%s );;
-            [u] ) echo "re-using RUNDIR";;
             *) echo "Please answer yes or no";;
         esac
     else
