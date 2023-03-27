@@ -1,4 +1,4 @@
-#!/bins/bash
+#!/bin/bash
 
 TYPE=$1
 NPB_FIXDIR=$2
@@ -7,6 +7,8 @@ files=""
 mkdir -p ${NPB_FIXDIR} 
 if [[ ${TYPE} == 'mx025gefs' ]]; then
     files="mod_def.mx025gefs.ww3"
+elif [[ ${TYPE} == 'gefsv13_025' ]]; then
+    files="mod_def.ww3.gefsv13_025 mesh.gefsv13_025.nc"
 elif [[ ${WAV_RES} == 'a' ]]; then
     files="mod_def.a.ww3 mesh.a.nc"
 elif [[ ${WAV_RES} == 'b' ]]; then
