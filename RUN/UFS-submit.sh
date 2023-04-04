@@ -49,8 +49,7 @@ source ${PATHRT}/tests/${RT_TEST}
 OCN_tasks=${OCN_NMPI:-$OCN_tasks}
 ICE_tasks=${ICE_NMPI:-$ICE_tasks}
 WAV_tasks=${WAV_NMPI:-$WAV_tasks}
-CHM_NMPI=${CHM_NMPI:-0}
-CHM_tasks=${CHM_NMPI:-$ATM_tasks}
+CHM_tasks=${CHM_NMPI:-0}
 FL=${FORECAST_LENGTH:-1}
 FHMAX=$( echo "${FL} * 24" | bc )
 FHMAX=${FHMAX%.*}

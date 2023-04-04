@@ -9,12 +9,14 @@ if [[ ${TYPE} == 'mx025gefs' ]]; then
     files="mod_def.mx025gefs.ww3"
 elif [[ ${TYPE} == 'gefsv13_025' ]]; then
     files="mod_def.ww3.gefsv13_025 mesh.gefsv13_025.nc"
-elif [[ ${WAV_RES} == 'a' ]]; then
+elif [[ ${TYPE} == 'a' ]]; then
     files="mod_def.a.ww3 mesh.a.nc"
-elif [[ ${WAV_RES} == 'b' ]]; then
+elif [[ ${TYPE} == 'b' ]]; then
     files="mod_def.b.ww mesh.b.nc"
-elif [[ ${WAV_RES} == 'tripolar' ]]; then
+elif [[ ${TYPE} == 'tripolar' ]]; then
     files="mod_def.tripolar.ww3"
+elif [[ ${TYPE} == "GOCART_OPS" ]]; then
+    files="AERO_HISTORY.rc CAP.rc AERO_ExtData.rc DU2G_instance_DU.rc GOCART2G_GridComp.rc field_table"
 fi
 
 for f in ${files}; do

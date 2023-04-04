@@ -36,7 +36,11 @@ if (( ${n_files} == (( NTILES )) )); then
         done
     done
     f=$( find ${ATM_ICDIR} -name "gfs_ctrl.nc" )
-    LF+=(["${f}"]="INPUT/")
+    if [[ ${FIX_METHOD} == 'LINK' ]]; then
+        LF+=(["${f}"]="INPUT/")
+    else
+        cp ${f} INPUT/$(basename ${f})
+    fi
 else #ATM WARMSTART
     echo "  FV3 Warm Start"
     warm_files='*ca_data*nc \

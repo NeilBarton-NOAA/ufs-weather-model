@@ -1,9 +1,9 @@
 #!/bin/bash
 set -u
 echo 'CMEPS-config.sh'
-NEMS_CONFIGURE=${NEMS_CONFIGURE:-${PATHRT}/parm/nems.configure.cpld_esmfthreads.IN}
-[[ ${CHM_tasks} == 0 && ${WAV_tasks} == 0 ]] && NEMS_CONFIGURE=${PATHRT}/parm/nems.configure.cpld_noaero_nowave.IN
-[[ ${CHM_tasks} == 0 && ${WAV_tasks} != 0 ]] && NEMS_CONFIGURE=${PATHRT}/parm/nems.configure.cpld_noaero_outwav.IN
+NEMS_CONFIGURE=${NEMS_CONFIGURE:-nems.configure.cpld_esmfthreads.IN}
+[[ ${CHM_tasks} == 0 && ${WAV_tasks} != 0 ]] && NEMS_CONFIGURE=nems.configure.cpld_noaero_outwav.IN
+[[ ${CHM_tasks} != 0 && ${WAV_tasks} != 0 ]] && NEMS_CONFIGURE=nems.configure.cpld_esmfthreads_outwav.IN
 PET_LOGS=${PETLOGS:-F}
 
 ########################
@@ -38,6 +38,6 @@ WAV_GRID=${WAV_GRID:-'default'}
 # write namelists files
 compute_petbounds_and_tasks
 cp ${PATHRT}/parm/fd_nems.yaml fd_nems.yaml
-atparse < ${NEMS_CONFIGURE} > nems.configure
+atparse < ${PATHRT}/parm/${NEMS_CONFIGURE} > nems.configure
 # post edits
 [[ ${PET_LOGS} == F ]] && sed -i "s:ESMF_LOGKIND_MULTI:ESMF_LOGKIND_MULTI_ON_ERROR:g" nems.configure
