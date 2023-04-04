@@ -25,6 +25,16 @@ else
    done
 fi
 
+########################
+#IO
+cp ${FIX_DIR}/mom6/20220805/${OCNRES}/MOM_layout INPUT/
+MOM6_IO_LAYOUT=${MOM6_IO_LAYOUT:-'1,1'}
+if [[ ${MOM6_IO_LAYOUT} != '1,1' ]]; then
+    sed -i "s:IO_LAYOUT = 1,1:IO_LAYOUT = ${MOM6_IO_LAYOUT}:g" INPUT/MOM_layout
+    ln=$(grep -wn INPUT/MOM_input input.nml | cut -d: -f1) && ln=$(( ln + 1))
+    sed -i "${ln} i   'INPUT/MOM_layout'," input.nml
+fi
+
 ####################################
 # fix files
 LF+=(

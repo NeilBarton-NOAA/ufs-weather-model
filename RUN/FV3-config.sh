@@ -178,8 +178,6 @@ LF+=(
 ["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m10.nc"]="aeroclim.m10.nc"
 ["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m11.nc"]="aeroclim.m11.nc"
 ["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m12.nc"]="aeroclim.m12.nc"
-["${FIX_DIR}/am/20220805/qr_acr_qgV2.dat"]="."
-["${FIX_DIR}/am/20220805/qr_acr_qsV2.dat"]="."
 ["${FIX_DIR}/am/20220805/global_h2o_pltc.f77"]="global_h2oprdlos.f77"
 ["${FIX_DIR}/am/20220805/ozprdlos_2015_new_sbuvO3_tclm15_nuchem.f77"]="global_o3prdlos.f77"
 ["${FIX_DIR}/am/20220805/global_soilmgldas.statsgo.t1534.3072.1536.grb"]="."
@@ -216,8 +214,8 @@ if (( ${IMP_PHYSICS} == 8 )); then
 LF+=(
 ["${FIX_DIR}/am/20220805/CCN_ACTIVATE.BIN"]="."
 ["${FIX_DIR}/am/20220805/freezeH2O.dat"]="."
-["${FIX_DIR}/am/20220805/qr_acr_qg.dat"]="."
-["${FIX_DIR}/am/20220805/qr_acr_qs.dat"]="."
+["${FIX_DIR}/am/20220805/qr_acr_qgV2.dat"]="."
+["${FIX_DIR}/am/20220805/qr_acr_qsV2.dat"]="."
 )
 fi
 

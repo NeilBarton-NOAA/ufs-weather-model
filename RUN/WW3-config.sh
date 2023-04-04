@@ -31,6 +31,9 @@ ${PATH_RUN}/FIX-from-hpss.sh ${WAV_RES} ${NPB_FIX}
 if [[ ${WAV_RES} == 'gwes_30m' ]]; then
     WAV_MOD_DEF=${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.gwes_30m
     MESH_WAV=${FIX_DIR}/wave/20220805/mesh.gwes_30m.nc
+elif [[ ${WAV_RES} == 'mx025gefs' ]]; then
+    WAV_MOD_DEF=${NPB_FIX}/mod_def.mx025gefs.ww3
+    MESH_WAV=${FIX_DIR}/cice/20220805/025/mesh.mx025.nc
 elif [[ ${WAV_RES} == 'gefsv13_025' ]]; then
     WAV_MOD_DEF=${NPB_FIX}/mod_def.ww3.gefsv13_025
     MESH_WAV=${NPB_FIX}/mesh.gefsv13_025.nc

@@ -64,7 +64,7 @@ if [[ ${CICE_OUTPUT} == F ]]; then
     sed -i "s:histfreq_n     =  0 , 0 , 6 , 1 , 1:histfreq_n     =  0 , 0 , 0 , 0 , 0:g" ice_in
 else
     sed -i "s:histfreq       = 'm','d','h','x','x':histfreq       = 'm','d','h','x','x':g"  ice_in
-    sed -i "s:histfreq_n     =  0 , 0 , 6 , 1 , 1:histfreq_n     =  0 , 1 , 0 , 0 , 0:g" ice_in
+    sed -i "s:histfreq_n     =  0 , 0 , 6 , 1 , 1:histfreq_n     =  0 , 0 , 24 , 0 , 0:g" ice_in
 
 fi
 
