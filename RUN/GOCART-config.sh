@@ -21,7 +21,7 @@ for f in ${files}; do
 done
 
 if [[ ${GOCART_OPS} == T ]]; then
-files="AERO_HISTORY.rc CAP.rc AERO_ExtData.rc DU2G_instance_DU.rc GOCART2G_GridComp.rc field_table"
+files="AERO_HISTORY.rc CAP.rc DU2G_instance_DU.rc GOCART2G_GridComp.rc field_table"
 ${PATH_RUN}/FIX-from-hpss.sh GOCART_OPS ${NPB_FIX} 
 for f in ${files}; do
     rm ${f}

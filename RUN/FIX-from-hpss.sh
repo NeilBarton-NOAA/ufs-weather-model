@@ -16,7 +16,7 @@ elif [[ ${TYPE} == 'b' ]]; then
 elif [[ ${TYPE} == 'tripolar' ]]; then
     files="mod_def.tripolar.ww3"
 elif [[ ${TYPE} == "GOCART_OPS" ]]; then
-    files="AERO_HISTORY.rc CAP.rc AERO_ExtData.rc DU2G_instance_DU.rc GOCART2G_GridComp.rc field_table"
+    files="AERO_HISTORY.rc CAP.rc DU2G_instance_DU.rc GOCART2G_GridComp.rc field_table"
 fi
 
 for f in ${files}; do
