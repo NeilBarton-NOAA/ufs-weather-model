@@ -17,17 +17,19 @@ RT_TEST=${RT_TEST:-cpld_bmark_p8}
 # delete run dir if needed
 if [[ -d ${RUNDIR} ]]; then
     if [[ ${DEBUG} == F ]]; then
+        echo "RUNDIR: ${RUNDIR}"
         read -p 'RUNDIR exists, Delete existing directory? (d) or Create new directory (c) ' ans
         case ${ans} in
             [Dd]* ) rm -r ${RUNDIR}/*;; 
-            [Cc]* ) RUNDIR=${RUNDIR}_$( date +%s );;
+            [Cc]* ) RUNDIR=${RUNDIR}_$( date +%s ) && echo "NEW RUNDIR: ${RUNDIR}";;
             *) echo "Please answer yes or no";;
         esac
     else
         rm -r ${RUNDIR}
     fi
+else
+    echo "RUNDIR: ${RUNDIR}"
 fi
-echo "RUNDIR: ${RUNDIR}"
 mkdir -p ${RUNDIR} && cd ${RUNDIR}
 
 ########################
