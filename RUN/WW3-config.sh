@@ -6,7 +6,7 @@ wav_omp_num_threads=${WAV_THRD:-${wav_omp_num_threads}}
 
 ####################################
 # look for restarts if provided
-WAV_RES=${WAV_RES:-gwes_30m}
+WAV_RES=${WAV_RES:-glo_025}
 echo '  WAV_RES:' ${WAV_RES}
 WAV_ICDIR=${ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/wav_p8c}
 wav_ic=$( find ${WAV_ICDIR} -name "${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart*${WAV_RES}" )
@@ -34,6 +34,9 @@ if [[ ${WAV_RES} == 'gwes_30m' ]]; then
 elif [[ ${WAV_RES} == 'mx025gefs' ]]; then
     WAV_MOD_DEF=${NPB_FIX}/mod_def.mx025gefs.ww3
     MESH_WAV=${FIX_DIR}/cice/20220805/025/mesh.mx025.nc
+elif [[ ${WAV_RES} == 'glo_025' ]]; then
+    WAV_MOD_DEF=${NPB_FIX}/mod_def.${WAV_RES}
+    MESH_WAV=${NPB_FIX}/mesh.${WAV_RES}.nc
 elif [[ ${WAV_RES} == 'gefsv13_025' ]]; then
     WAV_MOD_DEF=${NPB_FIX}/mod_def.ww3.gefsv13_025
     MESH_WAV=${NPB_FIX}/mesh.gefsv13_025.nc
