@@ -9,6 +9,10 @@ if [[ ${TYPE} == 'mx025gefs' ]]; then
     files="mod_def.mx025gefs.ww3"
 elif [[ ${TYPE} == 'gefsv13_025' ]]; then
     files="mod_def.ww3.gefsv13_025 mesh.gefsv13_025.nc"
+elif [[ ${TYPE} == 'glo_025' ]]; then
+    files="mod_def.glo_025 mesh.glo_025.nc"
+elif [[ ${TYPE} == 'glo_025_1800' ]]; then
+    files="mod_def.glo_025_1800 mesh.glo_025.nc"
 elif [[ ${TYPE} == 'a' ]]; then
     files="mod_def.a.ww3 mesh.a.nc"
 elif [[ ${TYPE} == 'b' ]]; then
