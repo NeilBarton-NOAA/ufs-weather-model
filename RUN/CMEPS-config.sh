@@ -28,7 +28,7 @@ fi
 # mpi tasks
 MED_tasks=${MED_NMPI:-$(( INPES * JNPES * atm_omp_num_threads ))}
 med_omp_num_threads=${atm_omp_num_threads}
-chm_omp_num_threads=${chm_omp_num_threads}
+chm_omp_num_threads=${atm_omp_num_threads}
 
 ########################
 # options based on other active components
