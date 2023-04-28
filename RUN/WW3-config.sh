@@ -40,15 +40,9 @@ elif [[ ${WAV_RES} == 'glo_025' ]]; then
 elif [[ ${WAV_RES} == 'gefsv13_025' ]]; then
     WAV_MOD_DEF=${NPB_FIX}/mod_def.ww3.gefsv13_025
     MESH_WAV=${NPB_FIX}/mesh.gefsv13_025.nc
-elif [[ ${WAV_RES} == 'a' ]]; then
-    WAV_MOD_DEF=${NPB_FIX}/mod_def.a.ww3
-    MESH_WAV=${NPB_FIX}/mesh.a.nc
-elif [[ ${WAV_RES} == 'b' ]]; then
-    WAV_MOD_DEF=${NPB_FIX}/mod_def.b.ww3
-    MESH_WAV=${NPB_FIX}/mesh.b.nc
-elif [[ ${WAV_RES} == 'tripolar' ]]; then
-    WAV_MOD_DEF=${NPB_FIX}/mod_def.tripolar.ww3
-    MESH_WAV=${FIX_DIR}/cice/20220805/025/mesh.mx025.nc
+elif [[ ${WAV_RES} == 'glo_025_1800' ]]; then
+    WAV_MOD_DEF=${NPB_FIX}/mod_def.${WAV_RES}
+    MESH_WAV=${NPB_FIX}/mesh.glo_025.nc
 fi
 if [[ ${FIX_METHOD} == 'RT' ]]; then 
     cp ${WAV_MOD_DEF} mod_def.ww3
