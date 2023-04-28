@@ -40,7 +40,6 @@ fi
 LF+=(
 ["${FIX_DIR}/mom6/20220805/${OCNRES}/All_edits.nc"]="INPUT/"
 ["${FIX_DIR}/mom6/20220805/${OCNRES}/MOM_channels_global_025"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/MOM_layout"]="INPUT/"
 ["${FIX_DIR}/mom6/20220805/${OCNRES}/MOM_override"]="INPUT/"
 ["${FIX_DIR}/mom6/20220805/${OCNRES}/geothermal_davies2013_v1.nc"]="INPUT/"
 ["${FIX_DIR}/mom6/20220805/${OCNRES}/hycom1_75_800m.nc"]="INPUT/"
