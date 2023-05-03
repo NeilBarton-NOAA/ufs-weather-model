@@ -2,6 +2,7 @@
 set -u
 echo 'CMEPS-config.sh'
 NEMS_CONFIGURE=${NEMS_CONFIGURE:-nems.configure.cpld_esmfthreads.IN}
+[[ ${CHM_tasks} == 0 && ${WAV_tasks} == 0 ]] && NEMS_CONFIGURE=nems.configure.cpld_noaero_nowave.IN
 [[ ${CHM_tasks} == 0 && ${WAV_tasks} != 0 ]] && NEMS_CONFIGURE=nems.configure.cpld_noaero_outwav.IN
 [[ ${CHM_tasks} != 0 && ${WAV_tasks} != 0 ]] && NEMS_CONFIGURE=nems.configure.cpld_esmfthreads_outwav.IN
 PET_LOGS=${PETLOGS:-F}
