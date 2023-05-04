@@ -31,6 +31,7 @@ CICE_HIST_AVG='.true.'
 
 ####################################
 # determine block size from ICE_tasks and grid
+DT_CICE=${ATM_DT:-$DT_CICE}
 NPROC_ICE=${ICE_tasks}
 ice_omp_num_threads=${ICE_THRD:-${ice_omp_num_threads}}
 cice_processor_shape=${CICE_DECOMP:-'slenderX2'}
