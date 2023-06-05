@@ -22,9 +22,10 @@ if [[ ${EXTRA_NODE} == T ]]; then
 fi
 
 # copy needed items
+mkdir -p modulefiles
 cp ${PATHRT}/module-setup.sh .
-cp ${module_file} modules.fv3.lua
-cp ${UFS_HOME}/modulefiles/ufs_common* .
+cp ${module_file} modulefiles/modules.fv3.lua
+cp ${UFS_HOME}/modulefiles/ufs_common* modulefiles
 cp ${UFS_HOME}/bin/${UFS_EXEC} fv3.exe
 
 # rm files if needed
