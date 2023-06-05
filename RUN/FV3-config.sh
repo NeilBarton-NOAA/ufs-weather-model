@@ -203,9 +203,9 @@ LF+=(
 #fi
 if [ ${WRITE_DOPOST} = .true. ]; then
 LF+=(
-["${PATHRT}/parm/post_itag"]="itag"
-["${PATHRT}/parm/postxconfig-NT.txt"]="."
-["${PATHRT}/parm/postxconfig-NT_FH00.txt"]="."
+["${PATHRT}/parm/post_itag_gfs"]="itag"
+["${PATHRT}/parm/postxconfig-NT-gfs.txt"]="postxconfig-NT.txt"
+["${PATHRT}/parm/postxconfig-NT-gfs_FH00.txt"]="postxconfg-HT_FH00.txt"
 ["${PATHRT}/parm/params_grib2_tbl_new"]="."
 )
 fi

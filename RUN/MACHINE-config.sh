@@ -30,7 +30,8 @@ elif [[ ${machine} == *login* ]]; then #WCOSS2
     JOB_CARD=fv3_qsub.IN_wcoss2
 fi
 
-export MACHINE_ID=${machine}.${compiler}
+#export MACHINE_ID=${machine}.${compiler}
+export MACHINE_ID=${machine}
 
 if [[ ${debug} == T ]]; then
     export module_file=${UFS_HOME}/modulefiles/ufs_${machine}.${compiler}_debug.lua

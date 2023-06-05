@@ -6,7 +6,7 @@ wav_omp_num_threads=${WAV_THRD:-${wav_omp_num_threads}}
 
 ####################################
 # look for restarts if provided
-WAV_RES=${WAV_RES:-glo_025}
+WAV_RES=${WAV_RES:-gwes_30m}
 echo '  WAV_RES:' ${WAV_RES}
 WAV_ICDIR=${ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/wav_p8c}
 wav_ic=$( find ${WAV_ICDIR} -name "${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart*${WAV_RES}" )
@@ -64,6 +64,8 @@ DTPNT=${WW3_DTPNT:-${DT_2_RST}}
 
 ####################################
 #parse namelist file
+export INPUT_CURFLD='C F     Currents'
+export INPUT_ICEFLD='C F     Ice concentrations'
 if [[ $MULTIGRID = 'true' ]]; then
  atparse < ${PATHRT}/parm/ww3_multi.inp.IN > ww3_multi.inp
 else
