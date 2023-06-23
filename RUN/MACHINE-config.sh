@@ -29,6 +29,7 @@ elif [[ ${machine} == *login* ]]; then #WCOSS2
     SUBMIT=qsub
     JOB_CARD=fv3_qsub.IN_wcoss2
 fi
+FIX_VER=20230426
 
 #export MACHINE_ID=${machine}.${compiler}
 export MACHINE_ID=${machine}

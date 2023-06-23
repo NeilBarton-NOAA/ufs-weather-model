@@ -9,10 +9,10 @@ wav_omp_num_threads=${WAV_THRD:-${wav_omp_num_threads}}
 WAV_RES=${WAV_RES:-gwes_30m}
 echo '  WAV_RES:' ${WAV_RES}
 WAV_ICDIR=${ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/wav_p8c}
-wav_ic=$( find ${WAV_ICDIR} -name "${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart*${WAV_RES}" )
+wav_ic=$( find -L ${WAV_ICDIR} -name "${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart*${WAV_RES}" )
 if [[ ! -f ${wav_ic} ]]; then
     echo "  WARNING: wav IC with RES not found, looking for a restart without RES defined"
-    wav_ic=$( find ${WAV_ICDIR} -name "${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart" )
+    wav_ic=$( find -L ${WAV_ICDIR} -name "${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart" )
 fi
 
 if [[ ! -f ${wav_ic} ]]; then
@@ -28,22 +28,17 @@ fi
 ####################################
 # change grid if needed
 ${PATH_RUN}/FIX-from-hpss.sh ${WAV_RES} ${NPB_FIX} 
-if [[ ${WAV_RES} == 'gwes_30m' ]]; then
-    WAV_MOD_DEF=${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.gwes_30m
-    MESH_WAV=${FIX_DIR}/wave/20220805/mesh.gwes_30m.nc
-elif [[ ${WAV_RES} == 'mx025gefs' ]]; then
-    WAV_MOD_DEF=${NPB_FIX}/mod_def.mx025gefs.ww3
-    MESH_WAV=${FIX_DIR}/cice/20220805/025/mesh.mx025.nc
-elif [[ ${WAV_RES} == 'glo_025' ]]; then
-    WAV_MOD_DEF=${NPB_FIX}/mod_def.${WAV_RES}
-    MESH_WAV=${NPB_FIX}/mesh.${WAV_RES}.nc
-elif [[ ${WAV_RES} == 'gefsv13_025' ]]; then
-    WAV_MOD_DEF=${NPB_FIX}/mod_def.ww3.gefsv13_025
-    MESH_WAV=${NPB_FIX}/mesh.gefsv13_025.nc
-elif [[ ${WAV_RES} == 'glo_025_1800' ]]; then
-    WAV_MOD_DEF=${NPB_FIX}/mod_def.${WAV_RES}
-    MESH_WAV=${NPB_FIX}/mesh.glo_025.nc
+MESH_WAV=${FIX_DIR}/wave/${FIX_VER}/mesh.${WAV_RES}.nc
+WAV_MOD_DEF=${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.${WAV_RES}
+if [[ ! -f ${WAV_MOD_DEF} ]]; then
+    WAV_MOD_DEF=${PATH_RUN}/mod_def.${WAV_RES}
+    if [[ ! -f ${WAV_MOD_DEF} ]]; then 
+        WAV_INP=${FIX_DIR}/wave/${FIX_VER}/ww3_grid.inp.${WAV_RES}
+        ${PATH_RUN}/WW3-inp2moddef.sh ${WAV_INP} ${UFS_HOME} ${machine} 
+        (( $? > 0 )) && echo 'FATAL: WAV_inp2moddef.sh failed' && exit 1
+    fi
 fi
+
 if [[ ${FIX_METHOD} == 'RT' ]]; then 
     cp ${WAV_MOD_DEF} mod_def.ww3
     cp ${WAV_MESH} .

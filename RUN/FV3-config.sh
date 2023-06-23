@@ -1,4 +1,8 @@
 #!/bin/bash
+####################################
+# Appendix A
+# https://www.gfdl.noaa.gov/wp-content/uploads/2020/02/FV3-Technical-Description.pdf
+####################################
 set -u
 declare -A LF
 LF=()
@@ -16,18 +20,18 @@ FIELD_TABLE=${FIELD_TABLE:-field_table_thompson_noaero_tke_GOCART}
 ####################################
 # restarts 
 ATM_ICDIR=${ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/p8c/${ATMRES}_L${NPZ}/INPUT}
-n_files=$( find ${ATM_ICDIR} -name "*sfc_data*nc" 2>/dev/null | wc -l )
+n_files=$( find -L ${ATM_ICDIR} -name "*sfc_data*nc" 2>/dev/null | wc -l )
 if (( ${n_files} == 0 )); then
     echo '  FATAL: no atm ICs found in:' ${ATM_ICDIR}
     exit 1
 fi
-n_files=$( find ${ATM_ICDIR} -name "*gfs_data*.nc" 2>/dev/null | wc -l)
+n_files=$( find -L ${ATM_ICDIR} -name "*gfs_data*.nc" 2>/dev/null | wc -l)
 if (( ${n_files} == (( NTILES )) )); then
     echo "  FV3 Cold Start"
     PREFIXS="gfs_data sfc_data"
     for t in $(seq ${NTILES}); do
         for v in ${PREFIXS}; do
-            f=$( find ${ATM_ICDIR} -name "${v}.tile${t}.nc" )
+            f=$( find -L ${ATM_ICDIR} -name "${v}.tile${t}.nc" )
             if [[ ${FIX_METHOD} == 'LINK' ]]; then
                 LF+=(["${f}"]="INPUT/")
             else
@@ -35,7 +39,7 @@ if (( ${n_files} == (( NTILES )) )); then
             fi
         done
     done
-    f=$( find ${ATM_ICDIR} -name "gfs_ctrl.nc" )
+    f=$( find -L ${ATM_ICDIR} -name "gfs_ctrl.nc" )
     if [[ ${FIX_METHOD} == 'LINK' ]]; then
         LF+=(["${f}"]="INPUT/")
     else
@@ -50,7 +54,7 @@ else #ATM WARMSTART
                 *phy_data*nc \
                 *sfc_data*nc'
     for warm_file in ${warm_files}; do
-        files=$( find ${ATM_ICDIR} -name "${warm_file}" )
+        files=$( find -L ${ATM_ICDIR} -name "${warm_file}" )
         for atm_ic in ${files}; do
             f=$( basename ${atm_ic} )
             if [[ ${f:11:4} == '0000' ]]; then
@@ -85,7 +89,19 @@ RESTART_N=${RESTART_FREQ:-${FHMAX}}
 OUTPUT_N=${OUTPUT_FREQ:-${FHMAX}}
 RESTART_INTERVAL="${RESTART_N} -1"
 OUTPUT_FH="${OUTPUT_N} -1"
-OUTPUT_FILE="'netcdf_parallel' 'netcdf_parallel'"
+case "${ATMRES}" in
+    "C384") 
+        OUTPUT_FILE="'netcdf_parallel' 'netcdf_parallel'"
+        ;;
+    "C96") 
+        OUTPUT_FILE="'netcdf'"
+        ;;
+    *)
+        echo "  FATAL: ${ATMRES} not found yet supported"
+        exit 1
+        ;;
+esac
+
 
 ####################################
 # NMPI options and thread options
@@ -101,12 +117,44 @@ WRTTASK_PER_GROUP=$(( WPG * atm_omp_num_threads ))
 NPZ=${ATM_LEVELS:-127}
 NPZP=$(( NPZ + 1 ))
 case "${ATMRES}" in
-    "C384") DT_ATMOS=${ATM_DT:-$DT_ATMOS}
-            IMO=1536 
-            JMO=768
-            NPX=385
-            NPY=385;;
+    "C384") 
+        DT_ATMOS=${ATM_DT:-$DT_ATMOS}
+        ICHUNK2D=$(( 4 * ${ATMRES:1} ))
+        JCHUNK2D=$(( 2 * ${ATMRES:1} ))
+        ICHUNK3D=$(( 4 * ${ATMRES:1} ))
+        JCHUNK3D=$(( 2 * ${ATMRES:1} ))
+        KCHUNK3D=1
+        IDEFLATE=1
+        NBITS=14
+        DNATS=0
+        ;;
+    "C96") 
+        DT_ATMOS=${ATM_DT:-720}
+        FNSMCC="'global_soilmgldas.statsgo.t1534.3072.1536.grb'"
+        FNMSKH="'global_slmask.t1534.3072.1536.grb'"
+        DOMAINS_STACK_SIZE=8000000
+        ;;
+    *)
+        echo "  FATAL: ${ATMRES} not found yet supported"
+        exit 1
+        ;;
 esac
+res=$( echo ${ATMRES} | cut -c2- )
+IMO=$(( ${res} * 4 ))
+JMO=$(( ${res} * 2 ))
+NPX=$(( ${res} + 1 ))
+NPY=$(( ${res} + 1 ))
+FNALBC="'${ATMRES}.snowfree_albedo.tileX.nc'"
+FNALBC2="'${ATMRES}.facsf.tileX.nc'"
+FNVETC="'${ATMRES}.vegetation_type.tileX.nc'"
+FNSOTC="'${ATMRES}.soil_type.tileX.nc'"
+FNABSC="'${ATMRES}.maximum_snow_albedo.tileX.nc'"
+FNTG3C="'${ATMRES}.substrate_temperature.tileX.nc'"
+FNVEGC="'${ATMRES}.vegetation_greenness.tileX.nc'"
+FNSLPC="'${ATMRES}.slope_type.tileX.nc'"
+FNVMNC="'${ATMRES}.vegetation_greenness.tileX.nc'"
+FNVMXC="'${ATMRES}.vegetation_greenness.tileX.nc'"
+DT_INNER=${DT_ATMOS}
 
 ####################################
 #  input.nml edits based on components running
@@ -116,16 +164,8 @@ esac
 ####################################
 # namelist options 
 IMP_PHYSICS=${ATM_PHYSICS:-${IMP_PHYSICS}}
-ICHUNK2D=$(( 4 * ${ATMRES:1} ))
-JCHUNK2D=$(( 2 * ${ATMRES:1} ))
-ICHUNK3D=$(( 4 * ${ATMRES:1} ))
-JCHUNK3D=$(( 2 * ${ATMRES:1} ))
-KCHUNK3D=1
-IDEFLATE=1
-NBITS=14
-DNATS=0
-DOGP_CLDOPTICS_LUT=.false.
-DOGP_LWSCAT=.false.
+#DOGP_CLDOPTICS_LUT=.false.
+#DOGP_LWSCAT=.false.
 
 ####################################
 # parse and edit namelist files
@@ -134,6 +174,8 @@ atparse < ${PATHRT}/parm/${MODEL_CONFIGURE} > model_configure
 cp ${PATHRT}/parm/field_table/${FIELD_TABLE} field_table 
 if [[ ${QUILTING} == '.true.' ]]; then
     atparse < ${PATHRT}/parm/diag_table/${DIAG_TABLE} > diag_table
+    sed -i "s:6,  "hours", 1,:${OUTPUT_FH},  "hours", 1,:g" diag_table
+    sed -i "s:1,  "days", 1,:${OUTPUT_FH},  "hours", 1,:g" diag_table
 else
 cat <<EOF > diag_table
 ${SYEAR}${SMONTH}${SDAY}.${SHOUR}Z.${ATMRES}.64bit.non-mono

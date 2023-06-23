@@ -25,7 +25,7 @@ if [[ -d ${RUNDIR} ]]; then
             *) echo "Please answer yes or no";;
         esac
     else
-        rm -r ${RUNDIR}
+        rm -r ${RUNDIR}/*
     fi
 else
     echo "RUNDIR: ${RUNDIR}"
@@ -52,6 +52,8 @@ OCN_tasks=${OCN_NMPI:-$OCN_tasks}
 ICE_tasks=${ICE_NMPI:-$ICE_tasks}
 WAV_tasks=${WAV_NMPI:-$WAV_tasks}
 CHM_tasks=${CHM_NMPI:-0}
+ATMRES=${ATM_RES:-$ATMRES}
+OCNRES=${OCN_RES:-$OCNRES}
 FL=${FORECAST_LENGTH:-1}
 FHMAX=$( echo "${FL} * 24" | bc )
 FHMAX=${FHMAX%.*}

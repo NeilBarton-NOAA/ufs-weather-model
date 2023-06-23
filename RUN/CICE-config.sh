@@ -5,7 +5,7 @@ mkdir -p history
 ####################################
 # look for restarts if provided
 ICE_ICDIR=${ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/cpc}
-ice_ic=$( find ${ICE_ICDIR} -name "*ice*.nc" )
+ice_ic=$( find -L ${ICE_ICDIR} -name "*ice*.nc" )
 if [[ ! -f ${ice_ic} ]]; then
     echo "  FATAL: ${ice_ic} file not found"
     exit 1
@@ -29,9 +29,30 @@ RESTART_FREQ=${RESTART_FREQ:-$FHMAX}
 DUMPFREQ_N=$(( RESTART_FREQ / 24 ))
 CICE_HIST_AVG='.true.'
 
+########################
+# resolution options
+case "${OCNRES}" in 
+    "100")
+    NX_GLB=360
+    NY_GLB=320
+    CICE_DECOMP="slenderX1"
+    ;;
+    "025")
+    NX_GLB=1440
+    NY_GLB=1080
+    CICE_DECOMP="slenderX2"
+    ;;
+    *)
+    echo "FATAL ERROR: Unsupported CICE resolution = ${OCNRES}, ABORT!"
+    exit 1
+    ;;
+esac
+CICEGRID=grid_cice_NEMS_mx${OCNRES}.nc
+CICEMASK=kmtu_cice_NEMS_mx${OCNRES}.nc
+
 ####################################
 # determine block size from ICE_tasks and grid
-DT_CICE=${ATM_DT:-$DT_CICE}
+DT_CICE=${DT_ATMOS:-$DT_CICE}
 NPROC_ICE=${ICE_tasks}
 ice_omp_num_threads=${ICE_THRD:-${ice_omp_num_threads}}
 cice_processor_shape=${CICE_DECOMP:-'slenderX2'}
@@ -51,12 +72,19 @@ fi
 
 ####################################
 # fix files
+if [[ ${OCNRES} == 025 ]]; then
 LF+=(
 ["${FIX_DIR}/cice/20220805/${OCNRES}/grid_cice_NEMS_mx${OCNRES}.nc"]="."
 ["${FIX_DIR}/cice/20220805/${OCNRES}/kmtu_cice_NEMS_mx${OCNRES}.nc"]="."
 ["${FIX_DIR}/cice/20220805/${OCNRES}/mesh.mx${OCNRES}.nc"]="."
 )
-
+elif [[ ${OCNRES} = 100 ]]; then
+LF+=(
+["${INPUTDATA_ROOT}/CICE_FIX/${OCNRES}/grid_cice_NEMS_mx${OCNRES}.nc"]="."
+["${INPUTDATA_ROOT}/CICE_FIX/${OCNRES}/kmtu_cice_NEMS_mx${OCNRES}.nc"]="."
+["${INPUTDATA_ROOT}/CICE_FIX/${OCNRES}/mesh.mx${OCNRES}.nc"]="."
+)
+fi
 ####################################
 # parse namelist file
 atparse < ${PATHRT}/parm/ice_in_template > ice_in
