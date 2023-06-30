@@ -2,6 +2,8 @@
 ####################################
 # Appendix A
 # https://www.gfdl.noaa.gov/wp-content/uploads/2020/02/FV3-Technical-Description.pdf
+# experimental fix files for different resolutions
+#   hera:/scratch2/NCEPDEV/stmp1/Sanath.Kumar/my_grids
 ####################################
 set -u
 declare -A LF
@@ -16,6 +18,7 @@ MODEL_CONFIGURE=${MODEL_CONFIGURE:-model_configure.IN}
 CCPP_SUITE=${CPP_SUITE:-FV3_GFS_v17_coupled_p8}
 DIAG_TABLE=${DIAG_TABLE:-diag_table_p8_template}
 FIELD_TABLE=${FIELD_TABLE:-field_table_thompson_noaero_tke_GOCART}
+ENS_SETTINGS=${ENS_SETTINGS:-T}
 
 ####################################
 # restarts 
@@ -93,7 +96,7 @@ case "${ATMRES}" in
     "C384") 
         OUTPUT_FILE="'netcdf_parallel' 'netcdf_parallel'"
         ;;
-    "C96") 
+    "C192" | "C96" ) 
         OUTPUT_FILE="'netcdf'"
         ;;
     *)
@@ -127,6 +130,9 @@ case "${ATMRES}" in
         IDEFLATE=1
         NBITS=14
         DNATS=0
+        ;;
+    "C192")
+        DT_ATMOS=${ATM_DT:-450}
         ;;
     "C96") 
         DT_ATMOS=${ATM_DT:-720}
@@ -163,9 +169,19 @@ DT_INNER=${DT_ATMOS}
 
 ####################################
 # namelist options 
+FV3_FIX_DIR=${FV3_FIX_DIR:-${FIX_DIR}/orog/${FIX_VER}}
 IMP_PHYSICS=${ATM_PHYSICS:-${IMP_PHYSICS}}
-#DOGP_CLDOPTICS_LUT=.false.
-#DOGP_LWSCAT=.false.
+if [[ ${FV3_FIX_DIR}} == *Kumar* ]]; then
+    FRAC_GRID=.false.
+fi
+if [[ ${ENS_SETTINGS} == T ]]; then
+    DO_SPPT=.true.
+    DO_SHUM=.false.
+    DO_SKEB=.true.
+    PERT_MP=.false.
+    PERT_RADTEND=.false.
+    PERT_CLDS=.true.
+fi
 
 ####################################
 # parse and edit namelist files
@@ -183,7 +199,36 @@ ${SYEAR} ${SMONTH} ${SDAY} ${SHOUR} 0 0
 EOF
 fi
 
-# add options to namelist files
+# add stochastic options to input.nml
+if [[ ${ENS_SETTINGS} == T ]]; then
+ens_options="\\
+  skeb = 0.8,-999,-999,-999,-999\n\
+  iseed_skeb = 0\n\
+  skeb_tau = 2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7\n\
+  skeb_lscale = 500.E3,1000.E3,2000.E3,2000.E3,2000.E3\n\
+  skebnorm = 1\n\
+  skeb_npass = 30\n\
+  skeb_vdof = 5\n\
+  sppt = 0.56,0.28,0.14,0.056,0.028\n\
+  iseed_sppt = 20210929000103,20210929000104,20210929000105,20210929000106,20210929000107\n\
+  sppt_tau = 2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7\n\
+  sppt_lscale = 500.E3,1000.E3,2000.E3,2000.E3,2000.E3\n\
+  sppt_logit = .true.\n\
+  sppt_sfclimit = .true.\n\
+  use_zmtnblck = .true.\n\
+  OCNSPPT=0.8,0.4,0.2,0.08,0.04\n\
+  OCNSPPT_LSCALE=500.E3,1000.E3,2000.E3,2000.E3,2000.E3\n\
+  OCNSPPT_TAU=2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7\n\
+  ISEED_OCNSPPT=20210929000108,20210929000109,20210929000110,20210929000111,20210929000112\n\
+  EPBL=0.8,0.4,0.2,0.08,0.04\n\
+  EPBL_LSCALE=500.E3,1000.E3,2000.E3,2000.E3,2000.E3\n\
+  EPBL_TAU=2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7\n\
+  ISEED_EPBL=20210929000113,20210929000114,20210929000115,20210929000116,20210929000117
+"
+sed -i "/nam_stochy/a ${ens_options}" input.nml
+fi
+
+# add options to model_configure namelist
 ln=$(grep -wn nbits model_configure | cut -d: -f1) && ln=$(( ln + 1))
 sed -i "${ln} i ichunk2d:                $(( 4 * ${ATMRES:1} ))" model_configure && ln=$(( ln + 1))
 sed -i "${ln} i jchunk2d:                $(( 2 * ${ATMRES:1} ))" model_configure
@@ -227,9 +272,6 @@ LF+=(
 ["${FIX_DIR}/am/20220805/CFSR.SEAICE.1982.2012.monthly.clim.grb"]="."
 ["${FIX_DIR}/am/20220805/IMS-NIC.blended.ice.monthly.clim.grb"]="."
 ["${FIX_DIR}/am/20220805/RTGSST.1982.2012.monthly.clim.grb"]="."
-)
-#if [ ${TILEDFIX} = .true. ]; then
-LF+=(
 ["${FIX_DIR}/am/20220805/global_albedo4.1x1.grb"]="."
 ["${FIX_DIR}/am/20220805/global_glacier.2x2.grb"]="."
 ["${FIX_DIR}/am/20220805/global_maxice.2x2.grb"]="."
@@ -242,7 +284,6 @@ LF+=(
 ["${FIX_DIR}/am/20220805/global_zorclim.1x1.grb"]="."
 ["${FIX_DIR}/am/20220805/seaice_newland.grb"]="."
 )
-#fi
 if [ ${WRITE_DOPOST} = .true. ]; then
 LF+=(
 ["${PATHRT}/parm/post_itag_gfs"]="itag"
@@ -270,8 +311,12 @@ LF+=(
 )
 
 for t in $(seq ${NTILES}); do
-    LF+=(["${FIX_DIR}/orog/20220805/${ATMRES}.mx${OCNRES}/${ATMRES}_grid.tile${t}.nc"]="INPUT/")
-    LF+=(["${FIX_DIR}/orog/20220805/${ATMRES}.mx${OCNRES}/oro_${ATMRES}.mx${OCNRES}.tile${t}.nc"]="INPUT/oro_data.tile${t}.nc")
+    LF+=(["${FV3_FIX_DIR}/${ATMRES}.mx${OCNRES}/${ATMRES}_grid.tile${t}.nc"]="INPUT/")
+    oro_tile=${FV3_FIX_DIR}/${ATMRES}.mx${OCNRES}/${ATMRES}_oro_data.tile${t}.nc
+    if [[ ! -f ${oro_tile} ]]; then
+        oro_tile=${FV3_FIX_DIR}/${ATMRES}.mx${OCNRES}/oro_${ATMRES}.mx${OCNRES}.tile${t}.nc
+    fi
+    LF+=(["${oro_tile}"]="INPUT/oro_data.tile${t}.nc")
     LF+=(["${FIX_DIR}/ugwd/20220805/${ATMRES}/${ATMRES}_oro_data_ls.tile${t}.nc"]="INPUT/oro_data_ls.tile${t}.nc")
     LF+=(["${FIX_DIR}/ugwd/20220805/${ATMRES}/${ATMRES}_oro_data_ss.tile${t}.nc"]="INPUT/oro_data_ss.tile${t}.nc")
     PREFIXS="
@@ -284,8 +329,9 @@ for t in $(seq ${NTILES}); do
     vegetation_greenness 
     vegetation_type"
     for v in ${PREFIXS}; do
-        LF+=(["${FIX_DIR}/orog/20220805/${ATMRES}.mx${OCNRES}/fix_sfc/${ATMRES}.${v}.tile${t}.nc"]=".")
+        LF+=(["${FV3_FIX_DIR}/${ATMRES}.mx${OCNRES}/fix_sfc/${ATMRES}.${v}.tile${t}.nc"]=".")
     done
 done
-LF+=(["${FIX_DIR}/cpl/20220805/a${ATMRES}o${OCNRES}/grid_spec.nc"]="INPUT/")
-LF+=(["${FIX_DIR}/orog/20220805/${ATMRES}.mx${OCNRES}/${ATMRES}_mosaic.nc"]="INPUT/")
+GRID_SPEC_FILE=${GRID_SPEC_FILE:-${FIX_DIR}/cpl/20220805/a${ATMRES}o${OCNRES}/grid_spec.nc}
+LF+=(["${GRID_SPEC_FILE}"]="INPUT/")
+LF+=(["${FV3_FIX_DIR}/${ATMRES}.mx${OCNRES}/${ATMRES}_mosaic.nc"]="INPUT/")
