@@ -17,6 +17,7 @@ if [[ ${machine} == hfe* ]]; then
     QUEUE=batch
     SUBMIT=sbatch
     JOB_CARD=fv3_slurm.IN_hera
+    export MACHINE_ID=${machine}
 elif [[ ${machine} == *login* ]]; then #WCOSS2
     machine='wcoss2'
     DISKNM=/lfs/h2/emc/nems/noscrub/emc.nems/RT
@@ -28,11 +29,10 @@ elif [[ ${machine} == *login* ]]; then #WCOSS2
     QUEUE=dev
     SUBMIT=qsub
     JOB_CARD=fv3_qsub.IN_wcoss2
+    export MACHINE_ID=${machine}.${compiler}
 fi
 FIX_VER=20230426
 
-#export MACHINE_ID=${machine}.${compiler}
-export MACHINE_ID=${machine}
 
 if [[ ${debug} == T ]]; then
     export module_file=${UFS_HOME}/modulefiles/ufs_${machine}.${compiler}_debug.lua

@@ -16,6 +16,7 @@ grid=${INP_FILE##*.inp.}
 #  Set up                         #
 ###################################
 if [ ${m} = hera ]; then export target=hera.intel ; fi
+if [ ${m} = wcoss2 ]; then export target=wcoss2.intel ; fi
 if [ ${m} = orion ]; then export target=orion.intel ; fi
 if [ ${m} = stampede ]; then export target=stampede.intel ; fi
 if [ ${m} = gaea ]; then export target=gaea.intel ; fi
@@ -81,6 +82,7 @@ if [[ -f ${INP_FILE} ]]; then
   fi
   echo "Executing ww3_grid, see grid output in ww3_${grid}.out"
   ${WW3_EXEDIR}/ww3_grid > ${workdir}/ww3_${grid}.out
+  mkdir -p ${UFSMODELDIR}/RUN
   mv mod_def.ww3 ${UFSMODELDIR}/RUN/mod_def.${grid}
   rm -f ww3_grid.inp ST4TABUHF2.bin
 else

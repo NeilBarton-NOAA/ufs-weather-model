@@ -31,7 +31,7 @@ ${PATH_RUN}/FIX-from-hpss.sh ${WAV_RES} ${NPB_FIX}
 MESH_WAV=${FIX_DIR}/wave/${FIX_VER}/mesh.${WAV_RES}.nc
 WAV_MOD_DEF=${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.${WAV_RES}
 if [[ ! -f ${WAV_MOD_DEF} ]]; then
-    WAV_MOD_DEF=${PATH_RUN}/mod_def.${WAV_RES}
+    WAV_MOD_DEF=${UFS_HOME}/RUN/mod_def.${WAV_RES}
     if [[ ! -f ${WAV_MOD_DEF} ]]; then 
         WAV_INP=${FIX_DIR}/wave/${FIX_VER}/ww3_grid.inp.${WAV_RES}
         ${PATH_RUN}/WW3-inp2moddef.sh ${WAV_INP} ${UFS_HOME} ${machine} 
