@@ -25,7 +25,7 @@ if (( ${n_files} == 0 )); then
         ;;
         "025")
         LF+=(
-        ["${INPUTDATA_ROOT}/MOM6_IC/MOM6_IC_TS_2011100100.nc"]="INPUT/MOM6_IC_TS.nc"
+        ["${INPUTDATA_ROOT}/MOM6_IC/MOM6_IC_TS_2021032206.nc"]="INPUT/MOM6_IC_TS.nc"
         ) 
         ;;
         *)
@@ -92,6 +92,18 @@ if [[ -f ${MOM_LAYOUT} ]]; then
 fi
 touch INPUT/MOM_override
 
+###################################
+# namelist settings
+if [[ ${ENS_SETTINGS} == T ]]; then
+DO_OCN_SPPT=true
+PERT_EPBL=true
+
+fi
+
+###################################
+# parse namelist file
+atparse < ${PATHRT}/parm/${MOM_INPUT} > INPUT/MOM_input
+
 ####################################
 # fix files
 LF+=(
@@ -127,7 +139,4 @@ LF+=(
 )
 fi
 
-###################################
-# parse namelist file
-atparse < ${PATHRT}/parm/${MOM_INPUT} > INPUT/MOM_input
 
