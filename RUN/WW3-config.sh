@@ -27,6 +27,7 @@ fi
 
 ####################################
 # change grid if needed
+FIX_VER=20230426
 ${PATH_RUN}/FIX-from-hpss.sh ${WAV_RES} ${NPB_FIX} 
 MESH_WAV=${FIX_DIR}/wave/${FIX_VER}/mesh.${WAV_RES}.nc
 WAV_MOD_DEF=${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.${WAV_RES}
