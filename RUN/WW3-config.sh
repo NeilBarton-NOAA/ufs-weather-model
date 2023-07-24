@@ -12,7 +12,7 @@ WAV_ICDIR=${ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/wav_p
 wav_ic=$( find -L ${WAV_ICDIR} -name "${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart*${WAV_RES}" )
 if [[ ! -f ${wav_ic} ]]; then
     echo "  WARNING: wav IC with RES not found, looking for a restart without RES defined"
-    wav_ic=$( find -L ${WAV_ICDIR} -name "${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart" )
+    wav_ic=$( find -L ${WAV_ICDIR} -name "${SYEAR}${SMONTH}${SDAY}.${SHOUR}0000.restart*" )
 fi
 
 if [[ ! -f ${wav_ic} ]]; then

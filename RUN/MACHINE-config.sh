@@ -10,7 +10,7 @@ if [[ ${machine} == hfe* ]]; then
     dprefix=/scratch1/NCEPDEV
     DISKNM=$dprefix/nems/emc.nemspara/RT
     FIX_DIR=/scratch1/NCEPDEV/global/glopara/fix
-    FIX_VER=20230426
+    FIX_VER=20220805
     AERO_INPUTS_DIR=/scratch1/NCEPDEV/global/glopara/data/gocart_emissions
     NPB_FIX=/scratch2/NCEPDEV/stmp3/Neil.Barton/CODE/FIX
     SCHEDULER=slurm

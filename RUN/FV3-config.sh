@@ -166,6 +166,7 @@ DT_INNER=${DT_ATMOS}
 #  input.nml edits based on components running
 [[ ${CHM_tasks} == 0 ]] && CPLCHM=.false. && FIELD_TABLE=field_table_thompson_noaero_tke_progsigma
 [[ ${WAV_tasks} == 0 ]] && CPLWAV=.false. && CPLWAV2ATM=.false.
+[[ ${CHM_tasks} != 0 ]] && IAER=2011
 
 ####################################
 # namelist options 
@@ -285,12 +286,21 @@ LF+=(
 ["${FIX_DIR}/am/20220805/seaice_newland.grb"]="."
 )
 if [ ${WRITE_DOPOST} = .true. ]; then
+if [[ -f ${PATHRT}/parm/post_itag_gfs ]]; then
 LF+=(
 ["${PATHRT}/parm/post_itag_gfs"]="itag"
 ["${PATHRT}/parm/postxconfig-NT-gfs.txt"]="postxconfig-NT.txt"
 ["${PATHRT}/parm/postxconfig-NT-gfs_FH00.txt"]="postxconfig-NT_FH00.txt"
 ["${PATHRT}/parm/params_grib2_tbl_new"]="."
 )
+else
+LF+=(
+["${PATHRT}/parm/post_itag"]="itag"
+["${PATHRT}/parm/postxconfig-NT.txt"]="postxconfig-NT.txt"
+["${PATHRT}/parm/postxconfig-NT_FH00.txt"]="postxconfig-NT_FH00.txt"
+["${PATHRT}/parm/params_grib2_tbl_new"]="."
+)
+fi
 fi
 
 if (( ${IMP_PHYSICS} == 8 )); then
