@@ -9,7 +9,8 @@ set -u
 
 INP_FILE=${1}
 UFSMODELDIR=${2}
-m=${3}
+PATH_MODDEF=${3}
+m=${4}
 grid=${INP_FILE##*.inp.}
 
 ###################################
@@ -82,8 +83,8 @@ if [[ -f ${INP_FILE} ]]; then
   fi
   echo "Executing ww3_grid, see grid output in ww3_${grid}.out"
   ${WW3_EXEDIR}/ww3_grid > ${workdir}/ww3_${grid}.out
-  mkdir -p ${UFSMODELDIR}/RUN
-  mv mod_def.ww3 ${UFSMODELDIR}/RUN/mod_def.${grid}
+  mkdir -p ${PATH_MODDEF}
+  mv mod_def.ww3 ${PATH_MODDEF}/mod_def.${grid}
   rm -f ww3_grid.inp ST4TABUHF2.bin
 else
   echo ' '
