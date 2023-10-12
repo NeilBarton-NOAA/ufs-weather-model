@@ -14,7 +14,8 @@ export_datm_cdeps
 export atm_datamode="GEFS"
 
 # atm configure
-export MOM_IAU="True"
+export ODA_INCUPD="True"
+export ODA_INCUPD_UV="True"
 export IATM=1536
 export JATM=768
 export ATM_NX_GLB=$IATM
@@ -25,6 +26,7 @@ export FILENAME_BASE='gefs.'
 export mesh_file="gefs_mesh.nc"
 export MESH_ATM="DATM_INPUT/${mesh_file}"
 export stream_files="DATM_INPUT/${FILENAME_BASE}201110.nc"
+export STREAM_OFFSET=-21600
 export RESTART_N=12
 export eps_imesh='2.5e-1'
 export TOPOEDITS=ufs.topo_edits_011818.nc
