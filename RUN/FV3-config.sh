@@ -169,10 +169,19 @@ DT_INNER=${DT_ATMOS}
 [[ ${CHM_tasks} != 0 ]] && IAER=2011
 
 ####################################
-# namelist options 
-FV3_FIX_DIR=${FV3_FIX_DIR:-${FIX_DIR}/orog/${FIX_VER}}
+# get latst versions of fix files
+FIX_VER_OROG=$(ls -ltr ${FIX_DIR}/orog | tail -n 1 | awk '{print $9}')
+FIX_VER_AER=$(ls -ltr ${FIX_DIR}/aer | tail -n 1 | awk '{print $9}')
+FIX_VER_AM=$(ls -ltr ${FIX_DIR}/am | tail -n 1 | awk '{print $9}')
+FIX_VER_LUT=$(ls -ltr ${FIX_DIR}/lut | tail -n 1 | awk '{print $9}')
+FIX_VER_UGWD=$(ls -ltr ${FIX_DIR}/ugwd | tail -n 1 | awk '{print $9}')
+FIX_VER_CPL=$(ls -ltr ${FIX_DIR}/cpl | tail -n 1 | awk '{print $9}')
+FV3_OROG_DIR=${FV3_OROG_DIR:-${FIX_DIR}/orog/${FIX_VER_OROG}}
+
+####################################
+# namelist options
 IMP_PHYSICS=${ATM_PHYSICS:-${IMP_PHYSICS}}
-if [[ ${FV3_FIX_DIR}} == *Kumar* ]]; then
+if [[ ${FV3_OROG_DIR}} == *Kumar* ]]; then
     FRAC_GRID=.false.
 fi
 if [[ ${ENS_SETTINGS} == T ]]; then
@@ -254,36 +263,36 @@ LF+=(
 ["${INPUTDATA_ROOT}/FV3_fix/sfc_emissivity_idx.txt"]="."
 ["${INPUTDATA_ROOT}/FV3_fix/solarconstant_noaa_an.txt"]="."
 ["${INPUTDATA_ROOT}/FV3_fix/aerosol.dat"]="."
-["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m01.nc"]="aeroclim.m01.nc"
-["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m02.nc"]="aeroclim.m02.nc"
-["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m03.nc"]="aeroclim.m03.nc"
-["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m04.nc"]="aeroclim.m04.nc"
-["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m05.nc"]="aeroclim.m05.nc"
-["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m06.nc"]="aeroclim.m06.nc"
-["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m07.nc"]="aeroclim.m07.nc"
-["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m08.nc"]="aeroclim.m08.nc"
-["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m09.nc"]="aeroclim.m09.nc"
-["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m10.nc"]="aeroclim.m10.nc"
-["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m11.nc"]="aeroclim.m11.nc"
-["${FIX_DIR}/aer/20220805/merra2.aerclim.2003-2014.m12.nc"]="aeroclim.m12.nc"
-["${FIX_DIR}/am/20220805/global_h2o_pltc.f77"]="global_h2oprdlos.f77"
-["${FIX_DIR}/am/20220805/ozprdlos_2015_new_sbuvO3_tclm15_nuchem.f77"]="global_o3prdlos.f77"
-["${FIX_DIR}/am/20220805/global_soilmgldas.statsgo.t1534.3072.1536.grb"]="."
-["${FIX_DIR}/am/20220805/global_slmask.t1534.3072.1536.grb"]="."
-["${FIX_DIR}/am/20220805/CFSR.SEAICE.1982.2012.monthly.clim.grb"]="."
-["${FIX_DIR}/am/20220805/IMS-NIC.blended.ice.monthly.clim.grb"]="."
-["${FIX_DIR}/am/20220805/RTGSST.1982.2012.monthly.clim.grb"]="."
-["${FIX_DIR}/am/20220805/global_albedo4.1x1.grb"]="."
-["${FIX_DIR}/am/20220805/global_glacier.2x2.grb"]="."
-["${FIX_DIR}/am/20220805/global_maxice.2x2.grb"]="."
-["${FIX_DIR}/am/20220805/global_shdmax.0.144x0.144.grb"]="."
-["${FIX_DIR}/am/20220805/global_shdmin.0.144x0.144.grb"]="."
-["${FIX_DIR}/am/20220805/global_slope.1x1.grb"]="."
-["${FIX_DIR}/am/20220805/global_snoclim.1.875.grb"]="."
-["${FIX_DIR}/am/20220805/global_tg3clim.2.6x1.5.grb"]="."
-["${FIX_DIR}/am/20220805/global_vegfrac.0.144.decpercent.grb"]="."
-["${FIX_DIR}/am/20220805/global_zorclim.1x1.grb"]="."
-["${FIX_DIR}/am/20220805/seaice_newland.grb"]="."
+["${FIX_DIR}/aer/${FIX_VER_AER}/merra2.aerclim.2003-2014.m01.nc"]="aeroclim.m01.nc"
+["${FIX_DIR}/aer/${FIX_VER_AER}/merra2.aerclim.2003-2014.m02.nc"]="aeroclim.m02.nc"
+["${FIX_DIR}/aer/${FIX_VER_AER}/merra2.aerclim.2003-2014.m03.nc"]="aeroclim.m03.nc"
+["${FIX_DIR}/aer/${FIX_VER_AER}/merra2.aerclim.2003-2014.m04.nc"]="aeroclim.m04.nc"
+["${FIX_DIR}/aer/${FIX_VER_AER}/merra2.aerclim.2003-2014.m05.nc"]="aeroclim.m05.nc"
+["${FIX_DIR}/aer/${FIX_VER_AER}/merra2.aerclim.2003-2014.m06.nc"]="aeroclim.m06.nc"
+["${FIX_DIR}/aer/${FIX_VER_AER}/merra2.aerclim.2003-2014.m07.nc"]="aeroclim.m07.nc"
+["${FIX_DIR}/aer/${FIX_VER_AER}/merra2.aerclim.2003-2014.m08.nc"]="aeroclim.m08.nc"
+["${FIX_DIR}/aer/${FIX_VER_AER}/merra2.aerclim.2003-2014.m09.nc"]="aeroclim.m09.nc"
+["${FIX_DIR}/aer/${FIX_VER_AER}/merra2.aerclim.2003-2014.m10.nc"]="aeroclim.m10.nc"
+["${FIX_DIR}/aer/${FIX_VER_AER}/merra2.aerclim.2003-2014.m11.nc"]="aeroclim.m11.nc"
+["${FIX_DIR}/aer/${FIX_VER_AER}/merra2.aerclim.2003-2014.m12.nc"]="aeroclim.m12.nc"
+["${FIX_DIR}/am/${FIX_VER_AM}/global_h2o_pltc.f77"]="global_h2oprdlos.f77"
+["${FIX_DIR}/am/${FIX_VER_AM}/ozprdlos_2015_new_sbuvO3_tclm15_nuchem.f77"]="global_o3prdlos.f77"
+["${FIX_DIR}/am/${FIX_VER_AM}/global_soilmgldas.statsgo.t1534.3072.1536.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/global_slmask.t1534.3072.1536.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/CFSR.SEAICE.1982.2012.monthly.clim.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/IMS-NIC.blended.ice.monthly.clim.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/RTGSST.1982.2012.monthly.clim.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/global_albedo4.1x1.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/global_glacier.2x2.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/global_maxice.2x2.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/global_shdmax.0.144x0.144.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/global_shdmin.0.144x0.144.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/global_slope.1x1.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/global_snoclim.1.875.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/global_tg3clim.2.6x1.5.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/global_vegfrac.0.144.decpercent.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/global_zorclim.1x1.grb"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/seaice_newland.grb"]="."
 )
 if [ ${WRITE_DOPOST} = .true. ]; then
 if [[ -f ${PATHRT}/parm/post_itag_gfs ]]; then
@@ -292,6 +301,7 @@ LF+=(
 ["${PATHRT}/parm/postxconfig-NT-gfs.txt"]="postxconfig-NT.txt"
 ["${PATHRT}/parm/postxconfig-NT-gfs_FH00.txt"]="postxconfig-NT_FH00.txt"
 ["${PATHRT}/parm/params_grib2_tbl_new"]="."
+["${PATHRT}/parm/noahmptable.tbl"]="."
 )
 else
 LF+=(
@@ -305,43 +315,46 @@ fi
 
 if (( ${IMP_PHYSICS} == 8 )); then
 LF+=(
-["${FIX_DIR}/am/20220805/CCN_ACTIVATE.BIN"]="."
-["${FIX_DIR}/am/20220805/freezeH2O.dat"]="."
-["${FIX_DIR}/am/20220805/qr_acr_qgV2.dat"]="."
-["${FIX_DIR}/am/20220805/qr_acr_qsV2.dat"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/CCN_ACTIVATE.BIN"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/freezeH2O.dat"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/qr_acr_qgV2.dat"]="."
+["${FIX_DIR}/am/${FIX_VER_AM}/qr_acr_qsV2.dat"]="."
 )
 fi
 
 LF+=(
-["${FIX_DIR}/lut/20220805/optics_BC.v1_3.dat"]="optics_BC.dat"
-["${FIX_DIR}/lut/20220805/optics_OC.v1_3.dat"]="optics_OC.dat"
-["${FIX_DIR}/lut/20220805/optics_DU.v15_3.dat"]="optics_DU.dat"
-["${FIX_DIR}/lut/20220805/optics_SS.v3_3.dat"]="optics_SS.dat"
-["${FIX_DIR}/lut/20220805/optics_SU.v1_3.dat"]="optics_SU.dat"
+["${FIX_DIR}/lut/${FIX_VER_LUT}/optics_BC.v1_3.dat"]="optics_BC.dat"
+["${FIX_DIR}/lut/${FIX_VER_LUT}/optics_OC.v1_3.dat"]="optics_OC.dat"
+["${FIX_DIR}/lut/${FIX_VER_LUT}/optics_DU.v15_3.dat"]="optics_DU.dat"
+["${FIX_DIR}/lut/${FIX_VER_LUT}/optics_SS.v3_3.dat"]="optics_SS.dat"
+["${FIX_DIR}/lut/${FIX_VER_LUT}/optics_SU.v1_3.dat"]="optics_SU.dat"
 )
 
 for t in $(seq ${NTILES}); do
-    LF+=(["${FV3_FIX_DIR}/${ATMRES}.mx${OCNRES}/${ATMRES}_grid.tile${t}.nc"]="INPUT/")
-    oro_tile=${FV3_FIX_DIR}/${ATMRES}.mx${OCNRES}/${ATMRES}_oro_data.tile${t}.nc
+    LF+=(["${FV3_OROG_DIR}/${ATMRES}.mx${OCNRES}/${ATMRES}_grid.tile${t}.nc"]="INPUT/")
+    oro_tile=${FV3_OROG_DIR}/${ATMRES}.mx${OCNRES}/${ATMRES}_oro_data.tile${t}.nc
     if [[ ! -f ${oro_tile} ]]; then
-        oro_tile=${FV3_FIX_DIR}/${ATMRES}.mx${OCNRES}/oro_${ATMRES}.mx${OCNRES}.tile${t}.nc
+        oro_tile=${FV3_OROG_DIR}/${ATMRES}.mx${OCNRES}/oro_${ATMRES}.mx${OCNRES}.tile${t}.nc
     fi
     LF+=(["${oro_tile}"]="INPUT/oro_data.tile${t}.nc")
-    LF+=(["${FIX_DIR}/ugwd/20220805/${ATMRES}/${ATMRES}_oro_data_ls.tile${t}.nc"]="INPUT/oro_data_ls.tile${t}.nc")
-    LF+=(["${FIX_DIR}/ugwd/20220805/${ATMRES}/${ATMRES}_oro_data_ss.tile${t}.nc"]="INPUT/oro_data_ss.tile${t}.nc")
+    LF+=(["${FIX_DIR}/ugwd/${FIX_VER_UGWD}/${ATMRES}/${ATMRES}_oro_data_ls.tile${t}.nc"]="INPUT/oro_data_ls.tile${t}.nc")
+    LF+=(["${FIX_DIR}/ugwd/${FIX_VER_UGWD}/${ATMRES}/${ATMRES}_oro_data_ss.tile${t}.nc"]="INPUT/oro_data_ss.tile${t}.nc")
     PREFIXS="
     facsf 
+    substrate_temperature
     maximum_snow_albedo 
-    slope_type 
     snowfree_albedo 
+    soil_color
     soil_type 
-    substrate_temperature 
+    vegetation_type
     vegetation_greenness 
-    vegetation_type"
+    slope_type 
+    "
     for v in ${PREFIXS}; do
-        LF+=(["${FV3_FIX_DIR}/${ATMRES}.mx${OCNRES}/fix_sfc/${ATMRES}.${v}.tile${t}.nc"]=".")
+        LF+=(["${FV3_OROG_DIR}/${ATMRES}/sfc/${ATMRES}.${v}.tile${t}.nc"]=".")
+        #LF+=(["${FV3_OROG_DIR}/${ATMRES}.mx${OCNRES}/fix_sfc/${ATMRES}.${v}.tile${t}.nc"]=".")
     done
 done
-GRID_SPEC_FILE=${GRID_SPEC_FILE:-${FIX_DIR}/cpl/20220805/a${ATMRES}o${OCNRES}/grid_spec.nc}
+GRID_SPEC_FILE=${GRID_SPEC_FILE:-${FIX_DIR}/cpl/${FIX_VER_CPL}/a${ATMRES}o${OCNRES}/grid_spec.nc}
 LF+=(["${GRID_SPEC_FILE}"]="INPUT/")
-LF+=(["${FV3_FIX_DIR}/${ATMRES}.mx${OCNRES}/${ATMRES}_mosaic.nc"]="INPUT/")
+LF+=(["${FV3_OROG_DIR}/${ATMRES}.mx${OCNRES}/${ATMRES}_mosaic.nc"]="INPUT/")

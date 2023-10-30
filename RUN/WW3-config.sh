@@ -27,14 +27,14 @@ fi
 
 ####################################
 # change grid if needed
-FIX_VER=20230426
+FIX_VER_WAVE=$(ls -ltr ${FIX_DIR}/wave | tail -n 1 | awk '{print $9}')
 ${PATH_RUN}/FIX-from-hpss.sh ${WAV_RES} ${NPB_FIX} 
 MESH_WAV=${FIX_DIR}/wave/${FIX_VER}/mesh.${WAV_RES}.nc
-WAV_MOD_DEF=${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.${WAV_RES}
+WAV_MOD_DEF=${INPUTDATA_ROOT_WW3}/mod_def.${WAV_RES}
 if [[ ! -f ${WAV_MOD_DEF} ]]; then
     WAV_MOD_DEF=${PATH_RUN}/mod_def.${WAV_RES}
     if [[ ! -f ${WAV_MOD_DEF} ]]; then 
-        WAV_INP=${FIX_DIR}/wave/${FIX_VER}/ww3_grid.inp.${WAV_RES}
+        WAV_INP=${FIX_DIR}/wave/${FIX_VER_WAVE}/ww3_grid.inp.${WAV_RES}
         ${PATH_RUN}/WW3-inp2moddef.sh ${WAV_INP} ${UFS_HOME} ${PATH_RUN} ${machine} 
         (( $? > 0 )) && echo 'FATAL: WAV_inp2moddef.sh failed' && exit 1
     fi
@@ -43,11 +43,11 @@ fi
 if [[ ${FIX_METHOD} == 'RT' ]]; then 
     cp ${WAV_MOD_DEF} mod_def.ww3
     cp ${WAV_MESH} .
-    cp ${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.points .
+    cp ${INPUTDATA_ROOT_WW3}/mod_def.points .
 else
     LF+=(
     ["${WAV_MOD_DEF}"]="mod_def.ww3"
-    ["${INPUTDATA_ROOT}/WW3_input_data_20220624/mod_def.points"]="."
+    ["${INPUTDATA_ROOT_WW3}/mod_def.points"]="."
     )
 fi
 

@@ -80,9 +80,10 @@ esac
 
 ########################
 # IO
-MOM_LAYOUT=${FIX_DIR}/mom6/20220805/${OCNRES}/MOM_layout 
+FIX_VER_MOM6=$(ls -ltr ${FIX_DIR}/mom6 | tail -n 1 | awk '{print $9}')
+MOM_LAYOUT=${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/MOM_layout 
 if [[ -f ${MOM_LAYOUT} ]]; then
-    cp ${FIX_DIR}/mom6/20220805/${OCNRES}/MOM_layout INPUT/
+    cp ${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/MOM_layout INPUT/
     MOM6_IO_LAYOUT=${MOM6_IO_LAYOUT:-'1,1'}
     if [[ ${MOM6_IO_LAYOUT} != '1,1' ]]; then
         sed -i "s:IO_LAYOUT = 1,1:IO_LAYOUT = ${MOM6_IO_LAYOUT}:g" INPUT/MOM_layout
@@ -107,25 +108,25 @@ atparse < ${PATHRT}/parm/${MOM_INPUT} > INPUT/MOM_input
 ####################################
 # fix files
 LF+=(
-["${FIX_DIR}/mom6/20220805/${OCNRES}/hycom1_75_800m.nc"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/interpolate_zgrid_40L.nc"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/layer_coord.nc"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/ocean_hgrid.nc"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/ocean_mask.nc"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/ocean_mosaic.nc"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/topog.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/hycom1_75_800m.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/interpolate_zgrid_40L.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/layer_coord.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/ocean_hgrid.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/ocean_mask.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/ocean_mosaic.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/topog.nc"]="INPUT/"
 )
 
 if [[ ${OCNRES} == 025 ]]; then
 LF+=(
-["${FIX_DIR}/mom6/20220805/${OCNRES}/ocean_topog.nc"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/geothermal_davies2013_v1.nc"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/All_edits.nc"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/MOM_override"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/MOM_channels_global_025"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/runoff.daitren.clim.1440x1080.v20180328.nc"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/seawifs-clim-1997-2010.1440x1080.v20180328.nc"]="INPUT/"
-["${FIX_DIR}/mom6/20220805/${OCNRES}/tidal_amplitude.v20140616.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/ocean_topog.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/geothermal_davies2013_v1.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/All_edits.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/MOM_override"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/MOM_channels_global_025"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/runoff.daitren.clim.1440x1080.v20180328.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/seawifs-clim-1997-2010.1440x1080.v20180328.nc"]="INPUT/"
+["${FIX_DIR}/mom6/${FIX_VER_MOM6}/${OCNRES}/tidal_amplitude.v20140616.nc"]="INPUT/"
 )
 fi
 

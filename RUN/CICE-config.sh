@@ -72,11 +72,12 @@ fi
 
 ####################################
 # fix files
+FIX_VER_CICE=$(ls -ltr ${FIX_DIR}/cice | tail -n 1 | awk '{print $9}')
 if [[ ${OCNRES} == 025 ]]; then
 LF+=(
-["${FIX_DIR}/cice/20220805/${OCNRES}/grid_cice_NEMS_mx${OCNRES}.nc"]="."
-["${FIX_DIR}/cice/20220805/${OCNRES}/kmtu_cice_NEMS_mx${OCNRES}.nc"]="."
-["${FIX_DIR}/cice/20220805/${OCNRES}/mesh.mx${OCNRES}.nc"]="."
+["${FIX_DIR}/cice/${FIX_VER_CICE}/${OCNRES}/grid_cice_NEMS_mx${OCNRES}.nc"]="."
+["${FIX_DIR}/cice/${FIX_VER_CICE}/${OCNRES}/kmtu_cice_NEMS_mx${OCNRES}.nc"]="."
+["${FIX_DIR}/cice/${FIX_VER_CICE}/${OCNRES}/mesh.mx${OCNRES}.nc"]="."
 )
 elif [[ ${OCNRES} = 100 ]]; then
 LF+=(
