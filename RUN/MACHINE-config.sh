@@ -3,10 +3,9 @@ set -u
 echo 'MACHINE-config.sh'
 RT_COMPILER=${RT_COMPILER:-intel}
 debug=${debug:-F}
-
 source ${PATHRT}/detect_machine.sh
 
-if [[ ${machine} == hera* ]]; then
+if [[ ${MACHINE_ID} == hera* ]]; then
     dprefix=/scratch1/NCEPDEV
     DISKNM=$dprefix/nems/emc.nemspara/RT
     FIX_DIR=/scratch1/NCEPDEV/global/glopara/fix
@@ -17,7 +16,7 @@ if [[ ${machine} == hera* ]]; then
     QUEUE=batch
     SUBMIT=sbatch
     JOB_CARD=fv3_slurm.IN_hera
-elif [[ ${machine} == wcoss2* ]]; then #WCOSS2
+elif [[ ${MACHINE_ID} == wcoss2* ]]; then #WCOSS2
     DISKNM=/lfs/h2/emc/nems/noscrub/emc.nems/RT
     FIX_DIR=/lfs/h2/emc/global/noscrub/emc.global/FIX/fix
     AERO_INPUTS_DIR=/lfs/h2/emc/global/noscrub/emc.global/data/gocart_emissions
@@ -31,9 +30,9 @@ fi
 
 
 if [[ ${debug} == T ]]; then
-    export module_file=${UFS_HOME}/modulefiles/ufs_${machine}.${RT_COMPILER}_debug.lua
+    export module_file=${UFS_HOME}/modulefiles/ufs_${MACHINE_ID}.${RT_COMPILER}_debug.lua
 else
-    export module_file=${UFS_HOME}/modulefiles/ufs_${machine}.${RT_COMPILER}.lua
+    export module_file=${UFS_HOME}/modulefiles/ufs_${MACHINE_ID}.${RT_COMPILER}.lua
 fi    
 
 # directories
