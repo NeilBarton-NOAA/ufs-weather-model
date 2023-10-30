@@ -29,10 +29,12 @@ elif [[ ${MACHINE_ID} == wcoss2* ]]; then #WCOSS2
 fi
 
 
+BUILD_ID=$(echo ${MACHINE_ID//.*}) # remove compiler info for older model versions
+BUILD_ID=${BUILD_ID}.${RT_COMPILER}
 if [[ ${debug} == T ]]; then
-    export module_file=${UFS_HOME}/modulefiles/ufs_${MACHINE_ID}.${RT_COMPILER}_debug.lua
+    export module_file=${UFS_HOME}/modulefiles/ufs_${BUILD_ID}_debug.lua
 else
-    export module_file=${UFS_HOME}/modulefiles/ufs_${MACHINE_ID}.${RT_COMPILER}.lua
+    export module_file=${UFS_HOME}/modulefiles/ufs_${BUILD_ID}.lua
 fi    
 
 # directories
