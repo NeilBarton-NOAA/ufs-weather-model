@@ -29,13 +29,13 @@ fi
 # change grid if needed
 FIX_VER_WAVE=$(ls -ltr ${FIX_DIR}/wave | tail -n 1 | awk '{print $9}')
 ${PATH_RUN}/FIX-from-hpss.sh ${WAV_RES} ${NPB_FIX} 
-MESH_WAV=${FIX_DIR}/wave/${FIX_VER}/mesh.${WAV_RES}.nc
+MESH_WAV=${FIX_DIR}/wave/${FIX_VER_WAVE}/mesh.${WAV_RES}.nc
 WAV_MOD_DEF=${INPUTDATA_ROOT_WW3}/mod_def.${WAV_RES}
 if [[ ! -f ${WAV_MOD_DEF} ]]; then
     WAV_MOD_DEF=${PATH_RUN}/mod_def.${WAV_RES}
     if [[ ! -f ${WAV_MOD_DEF} ]]; then 
         WAV_INP=${FIX_DIR}/wave/${FIX_VER_WAVE}/ww3_grid.inp.${WAV_RES}
-        ${PATH_RUN}/WW3-inp2moddef.sh ${WAV_INP} ${UFS_HOME} ${PATH_RUN} ${machine} 
+        ${PATH_RUN}/WW3-inp2moddef.sh ${WAV_INP} ${UFS_HOME} ${PATH_RUN} ${MACHINE_ID} 
         (( $? > 0 )) && echo 'FATAL: WAV_inp2moddef.sh failed' && exit 1
     fi
 fi
