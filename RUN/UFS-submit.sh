@@ -86,7 +86,6 @@ source ${PATH_RUN}/CMEPS-config.sh
 if [[ ${FIX_METHOD} == 'LINK' ]]; then
     source ${PATH_RUN}/FIXFILES-link.sh
 fi
-
 ########################
 # create job card
 source ${PATH_RUN}/JOB-config.sh

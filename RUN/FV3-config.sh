@@ -170,7 +170,8 @@ DT_INNER=${DT_ATMOS}
 
 ####################################
 # get latst versions of fix files
-FIX_VER_OROG=$(ls -ltr ${FIX_DIR}/orog | tail -n 1 | awk '{print $9}')
+#FIX_VER_OROG=$(ls -ltr ${FIX_DIR}/orog | tail -n 1 | awk '{print $9}')
+FIX_VER_OROG=$(ls -ltr ${FIX_DIR}/orog | tail -n 2 | head -1 | awk '{print $9}')
 FIX_VER_AER=$(ls -ltr ${FIX_DIR}/aer | tail -n 1 | awk '{print $9}')
 FIX_VER_AM=$(ls -ltr ${FIX_DIR}/am | tail -n 1 | awk '{print $9}')
 FIX_VER_LUT=$(ls -ltr ${FIX_DIR}/lut | tail -n 1 | awk '{print $9}')
