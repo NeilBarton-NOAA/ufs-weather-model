@@ -1,13 +1,12 @@
 #############################################
-####  NEMS Run-Time Configuration File  #####
+####  UFS Run-Time Configuration File  ######
 #############################################
 
 # ESMF #
 logKindFlag:            ESMF_LOGKIND_MULTI
-globalResourceControl:  true
 
 # EARTH #
-EARTH_component_list: MED ATM OCN ICE
+EARTH_component_list: MED ATM OCN ICE WAV
 EARTH_attributes::
   Verbosity = 0
 ::
@@ -37,6 +36,8 @@ OCN_attributes::
   Verbosity = 0
   DumpFields = false
   ProfileMemory = false
+  diro = "."
+  logfile = "mom6.log"
   OverwriteSlice = true
   mesh_ocn = @[MESHOCN_ICE]
 ::
@@ -56,14 +57,30 @@ ICE_attributes::
   stop_ymd = -999
 ::
 
+# WAV #
+WAV_model:                      @[wav_model]
+WAV_petlist_bounds:             @[wav_petlist_bounds]
+WAV_omp_num_threads:            @[wav_omp_num_threads]
+WAV_attributes::
+  Verbosity = 0
+  OverwriteSlice = false
+  diro = "."
+  logfile = wav.log
+  mesh_wav = @[MESH_WAV]
+  multigrid = @[MULTIGRID]
+  user_sets_restname = true
+::
+
 # CMEPS warm run sequence
 runSeq::
 @@[coupling_interval_slow_sec]
+   MED med_phases_prep_wav_avg
    MED med_phases_prep_ocn_avg
+   MED -> WAV :remapMethod=redist
    MED -> OCN :remapMethod=redist
+   WAV
    OCN
    @@[coupling_interval_fast_sec]
-     MED med_phases_aofluxes_run
      MED med_phases_prep_atm
      MED med_phases_prep_ice
      MED -> ATM :remapMethod=redist
@@ -76,9 +93,12 @@ runSeq::
      MED med_phases_post_ice
      MED med_phases_ocnalb_run
      MED med_phases_prep_ocn_accum
+     MED med_phases_prep_wav_accum
    @
    OCN -> MED :remapMethod=redist
+   WAV -> MED :remapMethod=redist
    MED med_phases_post_ocn
+   MED med_phases_post_wav
    MED med_phases_restart_write
 @
 ::
@@ -92,18 +112,9 @@ MED_attributes::
       ATM_model = @[atm_model]
       ICE_model = @[ice_model]
       OCN_model = @[ocn_model]
+      WAV_model = @[wav_model]
       coupling_mode = @[CPLMODE]
       history_tile_atm = @[ATMTILESIZE]
-      aoflux_grid = 'agrid'
-      aoflux_code = 'ccpp'
-      aoflux_ccpp_suite = 'FV3_sfc_ocean'
-      ccpp_restart_interval = @[RESTART_N_SEC]
-      ccpp_input_dir = 'INPUT/'
-      ccpp_nstf_name = @[NSTF_NAME]
-      ccpp_ini_mosaic_file = 'INPUT/C96_mosaic.nc'
-      ccpp_ini_file_prefix = 'INPUT/sfc_data.tile'
-      ccpp_ini_layout = @[INPES],@[JNPES]
-      ccpp_ini_read = false
       pio_rearranger = @[pio_rearranger]
       ocean_albedo_limit = @[ocean_albedo_limit]
 ::
@@ -115,6 +126,7 @@ ALLCOMP_attributes::
       ScalarFieldName = cpl_scalars
       start_type = @[RUNTYPE]
       restart_dir = RESTART/
+      RunTimeLog = true
       case_name = ufs.cpld
       restart_n = @[RESTART_N]
       restart_option = nhours
