@@ -6,15 +6,19 @@ mkdir -p history
 # look for restarts if provided
 ICE_ICDIR=${ICDIR:-${INPUTDATA_ROOT_BMIC}/${SYEAR}${SMONTH}${SDAY}${SHOUR}/cpc}
 ice_ic=${ice_ic:-$( find -L ${ICE_ICDIR} -name "*ice*.nc" )}
+if [[ ${ice_ic} != 'default' ]]; then
 if [[ ! -f ${ice_ic} ]]; then
     echo "  FATAL: ${ice_ic} file not found"
     exit 1
+fi
 fi
 rm -f cice_model.res.nc
 if [[ ${FIX_METHOD} == 'RT' ]]; then
     ln -sf ${IC_DIR}/ocn/* .
 else
-    LF+=(["${ice_ic}"]="cice_model.res.nc")
+    if [[ ${ice_ic} != 'default' ]]; then
+        LF+=(["${ice_ic}"]="cice_model.res.nc")
+    fi
 fi
 CICE_RESTART=${CICE_RESTART:-'.true.'}
 CICERUNTYPE=${CICERUNTYPE:-'initial'}
@@ -28,7 +32,7 @@ EOF
 CICE_OUTPUT=${CICE_OUTPUT:-F}
 RESTART_FREQ=${RESTART_FREQ:-$FHMAX}
 DUMPFREQ_N=$(( RESTART_FREQ / 24 ))
-CICE_HIST_AVG='.true.'
+CICE_HIST_AVG='.false.'
 
 ########################
 # resolution options
@@ -95,9 +99,12 @@ if [[ ${CICE_OUTPUT} == F ]]; then
     sed -i "s:histfreq_n     =  0 , 0 , 6 , 1 , 1:histfreq_n     =  0 , 0 , 0 , 0 , 0:g" ice_in
 else
     sed -i "s:histfreq       = 'm','d','h','x','x':histfreq       = 'm','d','h','1','x':g"  ice_in
-    sed -i "s:histfreq_n     =  0 , 0 , 6 , 1 , 1:histfreq_n     =  0 , 0 , 24 , 1 , 0:g" ice_in
+    sed -i "s:histfreq_n     =  0 , 0 , 6 , 1 , 1:histfreq_n     =  0 , 0 , 3 , 1 , 0:g" ice_in
 
 fi
 if [[ ${CICE_RESTART} == '.false.' ]]; then
     sed -i "s:restart        = .true.:restart        = .false.:g" ice_in
+fi
+if [[ ${ice_ic} == 'default' ]]; then
+    sed -i "s:ice_ic         = 'cice_model.res.nc':ice_ic         = '${ice_ic}':g" ice_in
 fi
