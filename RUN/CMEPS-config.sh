@@ -11,7 +11,7 @@ PET_LOGS=${PETLOGS:-F}
 ########################
 # ICs
 if [[ ${WARM_START} == '.true.' ]]; then
-    med_ic=$( find ${ICDIR} -name "*ufs.cpld.cpl.r*")
+    med_ic=${med_ic:-$( find ${ICDIR} -name "*ufs.cpld.cpl.r*")}
     if [[ ! -f ${med_ic} ]]; then
         echo "  FATAL: ${med_ic} file not found"
         exit 1
@@ -59,7 +59,13 @@ ATMTILESIZE=${ATMRES:1}
 ########################
 # write namelists files
 compute_petbounds_and_tasks
-cp ${PATHRT}/parm/fd_nems.yaml fd_nems.yaml
+fd_file=${PATHRT}/parm/fd_nems.yaml
+if [[ ! -f ${fd_file} ]]; then
+    fd_file=${PATHRT}/parm/fd_ufs.yaml 
+fi
+cp ${fd_file} fd_nems.yaml
+
+
 NEMS_FILE=${PATHRT}/parm/${NEMS_CONFIGURE}
 if [[ ! -f ${NEMS_FILE} ]]; then
     NEMS_FILE=${PATH_RUN}/../tests/parm/${NEMS_CONFIGURE}
