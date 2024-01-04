@@ -59,17 +59,22 @@ ATMTILESIZE=${ATMRES:1}
 ########################
 # write namelists files
 compute_petbounds_and_tasks
-fd_file=${PATHRT}/parm/fd_nems.yaml
-if [[ ! -f ${fd_file} ]]; then
-    fd_file=${PATHRT}/parm/fd_ufs.yaml 
-fi
-cp ${fd_file} fd_nems.yaml
-
-
 NEMS_FILE=${PATHRT}/parm/${NEMS_CONFIGURE}
 if [[ ! -f ${NEMS_FILE} ]]; then
     NEMS_FILE=${PATH_RUN}/../tests/parm/${NEMS_CONFIGURE}
 fi
-atparse < ${NEMS_FILE} > nems.configure
+#OLDER CODE
+fd_file=${PATHRT}/parm/fd_nems.yaml
+yaml_file=fd_nems.yaml
+config_file=nems.configure
+# NEWER CODE
+if [[ ! -f ${fd_file} ]]; then
+    # If not there, NEWER CODE
+    fd_file=${PATHRT}/parm/fd_ufs.yaml 
+    yaml_file=fd_ufs.yaml
+    config_file=ufs.configure
+fi
+atparse < ${NEMS_FILE} > ${config_file}
+cp ${fd_file} ${yaml_file}
 # post edits
-[[ ${PET_LOGS} == F ]] && sed -i "s:ESMF_LOGKIND_MULTI:ESMF_LOGKIND_MULTI_ON_ERROR:g" nems.configure
+[[ ${PET_LOGS} == F ]] && sed -i "s:ESMF_LOGKIND_MULTI:ESMF_LOGKIND_MULTI_ON_ERROR:g" ${config_file}
