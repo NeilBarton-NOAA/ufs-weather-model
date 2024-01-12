@@ -93,8 +93,8 @@ LF+=(
 fi
 ####################################
 # parse namelist file
-[[ -f ${PATHRT}/parm/ice_in_template ]] && parse_file=ice_in_template
 [[ -f ${PATHRT}/parm/ice_in.IN ]] && parse_file=ice_in.IN
+[[ -f ${PATHRT}/parm/ice_in_template ]] && parse_file=ice_in_template
 atparse < ${PATHRT}/parm/${parse_file} > ice_in
 if [[ ${CICE_OUTPUT} == F ]]; then
     sed -i "s:histfreq       = 'm','d','h','x','x':histfreq       = 'x','x','x','x','x':g"  ice_in
