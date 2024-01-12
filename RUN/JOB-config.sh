@@ -4,7 +4,7 @@ UFS_EXEC=${UFS_EXEC:-ufs_model}
 JBNME=${TEST_NAME:-UFS}
 WLCLK=${WALLCLOCK:-$WLCLK_dflt}
 EXTRA_NODE=${EXTRA_NODE:-F}
-(( $( echo "${WLCLK} < 30" | bc) )) && WLCLK=$(echo "${WLCLK} * 60" | bc)
+#(( $( echo "${WLCLK} < 30" | bc) )) && WLCLK=$(echo "${WLCLK} * 60" | bc)
 WLCLK=${WLCLK%.*}
 QUEUE=${JOB_QUEUE:-$QUEUE}
 # Total Nodes

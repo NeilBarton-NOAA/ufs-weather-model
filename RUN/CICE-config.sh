@@ -58,7 +58,7 @@ CICEMASK=kmtu_cice_NEMS_mx${OCNRES}.nc
 ####################################
 # determine block size from ICE_tasks and grid
 DT_CICE=${DT_ATMOS:-$DT_CICE}
-NPROC_ICE=${ICE_tasks}
+NPROC_ICE=${ICE_tasks} && CICE_NPROC=${ICE_tasks}
 ice_omp_num_threads=${ICE_THRD:-${ice_omp_num_threads}}
 cice_processor_shape=${CICE_DECOMP:-'slenderX2'}
 shape=${cice_processor_shape#${cice_processor_shape%?}}
@@ -93,7 +93,9 @@ LF+=(
 fi
 ####################################
 # parse namelist file
-atparse < ${PATHRT}/parm/ice_in_template > ice_in
+[[ -f ${PATHRT}/parm/ice_in_template ]] && parse_file=ice_in_template
+[[ -f ${PATHRT}/parm/ice_in.IN ]] && parse_file=ice_in.IN
+atparse < ${PATHRT}/parm/${parse_file} > ice_in
 if [[ ${CICE_OUTPUT} == F ]]; then
     sed -i "s:histfreq       = 'm','d','h','x','x':histfreq       = 'x','x','x','x','x':g"  ice_in
     sed -i "s:histfreq_n     =  0 , 0 , 6 , 1 , 1:histfreq_n     =  0 , 0 , 0 , 0 , 0:g" ice_in

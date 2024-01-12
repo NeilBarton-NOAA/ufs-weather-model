@@ -163,6 +163,16 @@ FNVMXC="'${ATMRES}.vegetation_greenness.tileX.nc'"
 DT_INNER=${DT_ATMOS}
 
 ####################################
+# Magic to handle namelist versions of &cires_ugwp_nml
+if [[ ${DO_UGWP_V1:-.false.} == .true. ]] ; then
+  export HIDE_UGWPV0='!'
+  export HIDE_UGWPV1=' '
+else
+  export HIDE_UGWPV0=' '
+  export HIDE_UGWPV1='!'
+fi
+
+####################################
 #  input.nml edits based on components running
 [[ ${CHM_tasks} == 0 ]] && CPLCHM=.false. && FIELD_TABLE=field_table_thompson_noaero_tke_progsigma
 [[ ${WAV_tasks} == 0 ]] && CPLWAV=.false. && CPLWAV2ATM=.false.

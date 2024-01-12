@@ -65,6 +65,7 @@ DTPNT=${WW3_DTPNT:-${DT_2_RST}}
 #parse namelist file
 export INPUT_CURFLD='C F     Currents'
 export INPUT_ICEFLD='C F     Ice concentrations'
+MULTIGRID=${MULTIGRID:-'false'}
 if [[ $MULTIGRID = 'true' ]]; then
  atparse < ${PATHRT}/parm/ww3_multi.inp.IN > ww3_multi.inp
 else

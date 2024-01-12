@@ -1,8 +1,10 @@
 #!/bin/sh
 echo 'MOM6-config.sh'
 MOM_INPUT=MOM_input_template_${OCNRES}
+[[ ! -f ${PATHRT}/parm/${MOM_INPUT} ]] && MOM_INPUT=MOM_input_${OCNRES}.IN
 ocn_omp_num_threads=${OCN_THRD:-${ocn_omp_num_threads}}
 mkdir -p INPUT MOM6_OUTPUT
+
 
 ####################################
 # options based on other active components
