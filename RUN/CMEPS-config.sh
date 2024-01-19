@@ -1,10 +1,9 @@
 #!/bin/bash
 set -u
 echo 'CMEPS-config.sh'
-#[[ ${CHM_tasks} == 0 && ${WAV_tasks} == 0 ]] && UFS_CONFIGURE=nems.configure.cpld_noaero_nowave.IN
-#[[ ${CHM_tasks} == 0 && ${WAV_tasks} != 0 ]] && UFS_CONFIGURE=nems.configure.cpld_noaero_outwav.IN
-#[[ ${CHM_tasks} != 0 && ${WAV_tasks} == 0 ]] && UFS_CONFIGURE=nems.configure.cpld_nowav.IN
-#[[ ${CHM_tasks} != 0 && ${WAV_tasks} != 0 ]] && UFS_CONFIGURE=nems.configure.cpld_outwav.IN
+[[ ${CHM_tasks} == 0 && ${WAV_tasks} == 0 ]] && UFS_CONFIGURE=ufs.configure.s2s.IN
+[[ ${CHM_tasks} == 0 && ${WAV_tasks} != 0 ]] && UFS_CONFIGURE=ufs.configure.s2sw.IN
+[[ ${CHM_tasks} != 0 && ${WAV_tasks} == 0 ]] && UFS_CONFIGURE=ufs.configure.s2sa.IN
 PET_LOGS=${PETLOGS:-F}
 
 ########################

@@ -22,9 +22,11 @@ if [[ ! -f ${wav_ic} ]]; then
     echo "  WAV IC not found, waves will cold start"
 else
     if [[ ${FIX_METHOD} == 'RT' ]]; then
-        ln -sf ${wav_ic} restart.ww3
+        ln -sf ${wav_ic} ufs.cpld.ww3.r.${SYEAR}-${SMONTH}-${SDAY}-${SECS}
+        #ln -sf ${wav_ic} restart.ww3
     else
-        LF+=(["${wav_ic}"]="restart.ww3")
+        LF+=(["${wav_ic}"]="ufs.cpld.ww3.r.${SYEAR}-${SMONTH}-${SDAY}-${SECS}")
+        #LF+=(["${wav_ic}"]="restart.ww3")
     fi
 fi
 
@@ -69,6 +71,7 @@ MULTIGRID=${MULTIGRID:-'false'}
 if [[ $MULTIGRID = 'true' ]]; then
  atparse < ${PATHRT}/parm/ww3_multi.inp.IN > ww3_multi.inp
 else
- atparse < ${PATHRT}/parm/ww3_shel.inp.IN > ww3_shel.inp
+ atparse < ${PATHRT}/parm/ww3_shel.nml.IN > ww3_shel.nml
+ cp ${PATHRT}/parm/ww3_points.list .
 fi
 
