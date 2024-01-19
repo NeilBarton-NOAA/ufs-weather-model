@@ -75,4 +75,4 @@ fi
 atparse < ${UFS_FILE} > ${config_file}
 cp ${fd_file} ${yaml_file}
 # post edits
-#[[ ${PET_LOGS} == F ]] && sed -i "s:ESMF_LOGKIND_MULTI:ESMF_LOGKIND_MULTI_ON_ERROR:g" ${config_file}
+[[ ${PET_LOGS} == F ]] && sed -i "s:ESMF_LOGKIND_MULTI:ESMF_LOGKIND_MULTI_ON_ERROR:g" ${config_file}
