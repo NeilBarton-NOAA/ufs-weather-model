@@ -34,5 +34,11 @@ cp ${UFS_HOME}/bin/${UFS_EXEC} fv3.exe
 
 # Create job_card
 atparse < $PATHRT/fv3_conf/${JOB_CARD} > job_card
-
+# add module purge options
+ln=$(grep -wn set +x job_card | cut -d: -f1) && ln=$(( ln + 1))
+sed -i "module purge" job_card
+if [[ ${MACHINE_ID} == wcoss2* ]]; then #WCOSS2
+    ln=$(( ln + 1))
+    sed -i "module reset" job_card
+fi
 
