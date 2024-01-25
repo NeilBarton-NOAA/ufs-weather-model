@@ -1,9 +1,9 @@
 #!/bin/bash
 set -u
 echo 'CMEPS-config.sh'
-[[ ${CHM_tasks} == 0 && ${WAV_tasks} == 0 ]] && UFS_CONFIGURE=ufs.configure.s2s.IN
-[[ ${CHM_tasks} == 0 && ${WAV_tasks} != 0 ]] && UFS_CONFIGURE=ufs.configure.s2sw.IN
-[[ ${CHM_tasks} != 0 && ${WAV_tasks} == 0 ]] && UFS_CONFIGURE=ufs.configure.s2sa.IN
+[[ ${CHM_tasks} == 0 && ${WAV_tasks} == 0 ]] && UFS_CONFIGURE=ufs.configure.s2s_esmf.IN
+[[ ${CHM_tasks} == 0 && ${WAV_tasks} != 0 ]] && UFS_CONFIGURE=ufs.configure.s2sw_esmf.IN
+[[ ${CHM_tasks} != 0 && ${WAV_tasks} == 0 ]] && UFS_CONFIGURE=ufs.configure.s2sa_esmf.IN
 PET_LOGS=${PETLOGS:-F}
 
 ########################
