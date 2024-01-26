@@ -164,12 +164,17 @@ DT_INNER=${DT_ATMOS}
 
 ####################################
 # Magic to handle namelist versions of &cires_ugwp_nml
+[[ ${CCPP_SUITE} == FV3_GFS_v17_coupled_p8_ugwpv1 ]] && DO_UGWP_V1=.true.
 if [[ ${DO_UGWP_V1:-.false.} == .true. ]] ; then
   export HIDE_UGWPV0='!'
   export HIDE_UGWPV1=' '
+  export DO_UGWP_V1_OROG_ONLY=.false.
+  export DO_UGWP_V0=.false.
+  export DO_UGWP_V0_NST_ONLY=.false.
 else
   export HIDE_UGWPV0=' '
   export HIDE_UGWPV1='!'
+  export DO_UGWP_V1_OROG_ONLY=.true.
 fi
 
 ####################################
@@ -366,6 +371,9 @@ for t in $(seq ${NTILES}); do
         #LF+=(["${FV3_OROG_DIR}/${ATMRES}.mx${OCNRES}/fix_sfc/${ATMRES}.${v}.tile${t}.nc"]=".")
     done
 done
+if [[ ${DO_UGWP_V1} == .true. ]] ; then
+    LF+=(["${FIX_DIR}/ugwd/${FIX_VER_UGWD}/ugwp_limb_tau.nc"]=".")
+fi
 GRID_SPEC_FILE=${GRID_SPEC_FILE:-${FIX_DIR}/cpl/${FIX_VER_CPL}/a${ATMRES}o${OCNRES}/grid_spec.nc}
 LF+=(["${GRID_SPEC_FILE}"]="INPUT/")
 LF+=(["${FV3_OROG_DIR}/${ATMRES}.mx${OCNRES}/${ATMRES}_mosaic.nc"]="INPUT/")

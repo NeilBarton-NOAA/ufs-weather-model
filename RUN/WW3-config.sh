@@ -42,7 +42,6 @@ if [[ ! -f ${WAV_MOD_DEF} ]]; then
         WAV_INP=${FIX_DIR}/wave/${FIX_VER_WAVE}/ww3_grid.inp.${WAV_RES}
         module purge
         [[ ${MACHINE_ID} == wcoss2* ]] && module reset
-        module reset
         ${PATH_RUN}/WW3-inp2moddef.sh ${WAV_INP} ${UFS_HOME} ${PATH_RUN} ${MACHINE_ID} 
         (( $? > 0 )) && echo 'FATAL: WAV_inp2moddef.sh failed' && exit 1
     fi
