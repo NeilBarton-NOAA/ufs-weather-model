@@ -15,7 +15,7 @@ mkdir -p INPUT RESTART
 # namelist defaults
 INPUT_NML=${INPUT_NML:-cpld_control.nml.IN}
 MODEL_CONFIGURE=${MODEL_CONFIGURE:-model_configure.IN}
-CCPP_SUITE=${CPP_SUITE:-FV3_GFS_v17_coupled_p8}
+CCPP_SUITE=${CPP_SUITE:-FV3_GFS_v17_coupled_p8_ugwpv1}
 DIAG_TABLE=${DIAG_TABLE:-diag_table_p8_template}
 FIELD_TABLE=${FIELD_TABLE:-field_table_thompson_noaero_tke_GOCART}
 ENS_SETTINGS=${ENS_SETTINGS:-T}
