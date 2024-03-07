@@ -4,12 +4,13 @@ echo 'CMEPS-config.sh'
 [[ ${CHM_tasks} == 0 && ${WAV_tasks} == 0 ]] && UFS_CONFIGURE=ufs.configure.s2s_esmf.IN
 [[ ${CHM_tasks} == 0 && ${WAV_tasks} != 0 ]] && UFS_CONFIGURE=ufs.configure.s2sw_esmf.IN
 [[ ${CHM_tasks} != 0 && ${WAV_tasks} == 0 ]] && UFS_CONFIGURE=ufs.configure.s2sa_esmf.IN
+[[ ${CHM_tasks} != 0 && ${WAV_tasks} != 0 ]] && UFS_CONFIGURE=ufs.configure.s2swa_esmf.IN
 PET_LOGS=${PETLOGS:-F}
 
 ########################
 # ICs
 if [[ ${WARM_START} == '.true.' ]]; then
-    med_ic=${med_ic:-$( find ${ICDIR} -name "*ufs.cpld.cpl.r*")}
+    med_ic=${med_ic:-$( find ${ICDIR} -name "*ufs.cpld.cpl.r*.nc")}
     if [[ ! -f ${med_ic} ]]; then
         echo "  FATAL: ${med_ic} file not found"
         exit 1
