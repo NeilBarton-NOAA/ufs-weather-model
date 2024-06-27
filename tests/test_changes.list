@@ -1,2 +1,2 @@
-merra2_thompson intel
-atmaero_control_p8_rad_micro intel
+control_wam intel
+control_wam_debug intel
