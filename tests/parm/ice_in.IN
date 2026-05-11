@@ -94,12 +94,13 @@
     restart_aero = .false.
     tr_fsd       = .false.
     restart_fsd  = .false.
+    tr_snow      = @[CICE_TR_SNOW]
 /
 
 &thermo_nml
     kitd              = 1
     ktherm            = @[CICE_KTHERM]
-    conduct           = 'MU71'
+    conduct           = @[CICE_CONDUCT]
     a_rapid_mode      =  0.5e-3
     Rac_rapid_mode    =    10.0
     aspect_rapid_mode =     1.0
@@ -117,14 +118,14 @@
     arlx            = 300.0
     ssh_stress      = 'coupled'
     advection       = 'remap'
-    kstrength       = 1
+    kstrength       = @[CICE_KSTRENGTH]
     krdg_partic     = 1
     krdg_redist     = 1
     mu_rdg          = 3
     Cf              = 17.
     Ktens           = 0.
-    e_yieldcurve    = 2.
-    e_plasticpot    = 2.
+    e_yieldcurve    = @[CICE_E_YIELDCURVE]
+    e_plasticpot    = @[CICE_E_PLASTICPOT]
     coriolis        = 'latitude'
     kridge          = 1
     ktransport      = 1
@@ -140,9 +141,10 @@
     albsnowv        = 0.98
     albsnowi        = 0.70
     ahmax           = 0.3
-    R_ice           = 0.
-    R_pnd           = 0.
-    R_snw           = 1.5
+    ahmax           = @[CICE_AHMAX]
+    R_ice           = @[CICE_R_ICE]
+    R_pnd           = @[CICE_R_PND]
+    R_snw           = @[CICE_R_SNW]
     dT_mlt          = 1.5
     rsnw_mlt        = 1500.
     kalg            = 0.0
@@ -161,7 +163,14 @@
 /
 
 &snow_nml
-    snwredist       = 'none'
+    snwredist       = @[CICE_SNWREDIST]
+    rhosnew         = 100.
+    rhosmin         = 100.
+    rhosmax         = 450.
+    windmin         = 10.
+    drhosdwind      = 27.3
+    snwlvlfac       = 0.3
+    snwgrain        = @[CICE_SNWGRAIN]
 /
 
 &forcing_nml
@@ -173,7 +182,7 @@
     natmiter        = 5
     ustar_min       = 0.0005
     emissivity      = 0.95
-    fbot_xfer_type  = 'constant'
+    fbot_xfer_type  = @[CICE_FBOT_XFER_TYPE]
     update_ocn_f    = @[CICE_FRAZIL_FWSALT]
     l_mpond_fresh   = .false.
     tfrz_option     = '@[CICE_TFREEZE_OPTION]'
@@ -391,6 +400,21 @@
 
 &icefields_bgc_nml
 /
+
+&icefields_snow_nml
+    f_smassice   = 'mdh1x'
+    f_smassicen  = 'mdh1x'
+    f_smassliq   = 'mdh1x' 
+    f_smassliqn  = 'mdh1x'
+    f_rhos_cmp   = 'x'
+    f_rhos_cmpn  = 'x'
+    f_rhos_cnt   = 'x'
+    f_rhos_cntn  = 'x'
+    f_rsnw       = 'mdh1x'
+    f_rsnwn      = 'mdh1x'
+    f_meltsliq   = 'x'
+    f_fsloss     = 'x'
+/ 
 
 &ice_prescribed_nml
   prescribed_ice_mode = .@[CICE_PRESCRIBED].
