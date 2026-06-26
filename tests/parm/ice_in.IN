@@ -152,7 +152,7 @@
 /
 
 &ponds_nml
-    hp1             = 0.01
+    hp1             = @[CICE_HP1]
     hs0             = @[CICE_HS0]
     hs1             = @[CICE_HS1]
     dpscale         = @[CICE_DPSCALE]
