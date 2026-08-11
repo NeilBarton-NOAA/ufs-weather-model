@@ -107,6 +107,7 @@
     dSdt_slow_mode    = -5.0e-8
     phi_c_slow_mode   =    0.05
     phi_i_mushy       =    0.85
+    tscale_pnd_drain  = @[CICE_TSCALE_PND_DRAIN]
 /
 
 &dynamics_nml
@@ -353,6 +354,21 @@
     f_sitempsnic    = 'x'
     f_sitemptop     = 'x'
     f_sitempbot     = 'x'
+/
+
+&icefields_snow_nml
+    f_smassice   = 'mdh1x'
+    f_smassicen  = 'mdh1x'
+    f_smassliq   = 'mdh1x'
+    f_smassliqn  = 'mdh1x'
+    f_rhos_cmp   = 'x'
+    f_rhos_cmpn  = 'x'
+    f_rhos_cnt   = 'x'
+    f_rhos_cntn  = 'x'
+    f_rsnw       = 'mdh1x'
+    f_rsnwn      = 'mdh1x'
+    f_meltsliq   = 'x'
+    f_fsloss     = 'x'
 /
 
 &icefields_mechred_nml
