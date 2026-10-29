@@ -1,0 +1,26 @@
+name: Sync Fork with Upstream
+
+on:
+  schedule:
+    # Runs daily at 06:00 UTC (2:00 AM EDT / 1:00 AM EST)
+    - cron: '0 6 * * *'
+  # Allows triggering the sync manually anytime from the Actions UI
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync main branch with ufs-community
+        run: gh repo sync NeilBarton-NOAA/ufs-weather-model -b main --source ufs-community/ufs-weather-model
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sync develop branch (if applicable)
+        run: gh repo sync NeilBarton-NOAA/ufs-weather-model -b develop --source ufs-community/ufs-weather-model
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
